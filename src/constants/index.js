@@ -13,6 +13,9 @@ import {
   nodejs,
   mongodb,
   git,
+  unreal,
+  cplusplus,
+  python,
   figma,
   docker,
   meta,
@@ -24,6 +27,9 @@ import {
   carrent,
   jobit,
   tripguide,
+  laslesvpn,
+  weatherapp,
+  gameslisting,
   threejs,
 } from "../assets";
 
@@ -75,16 +81,8 @@ const technologies = [
     icon: javascript,
   },
   {
-    name: "TypeScript",
-    icon: typescript,
-  },
-  {
     name: "React JS",
     icon: reactjs,
-  },
-  {
-    name: "Redux Toolkit",
-    icon: redux,
   },
   {
     name: "Tailwind CSS",
@@ -95,25 +93,25 @@ const technologies = [
     icon: nodejs,
   },
   {
-    name: "MongoDB",
-    icon: mongodb,
-  },
-  {
     name: "Three JS",
     icon: threejs,
   },
-  {
-    name: "git",
-    icon: git,
-  },
-  {
-    name: "figma",
-    icon: figma,
-  },
-  {
-    name: "docker",
-    icon: docker,
-  },
+  // {
+  //   name: "git",
+  //   icon: git,
+  // },
+  // {
+  //   name: "C++",
+  //   icon: cplusplus,
+  // },
+  // {
+  //   name: "Python",
+  //   icon: python,
+  // },
+  // {
+  //   name: "Unreal Engine",
+  //   icon: unreal,
+  // },
 ];
 
 const experiences = [
@@ -197,16 +195,16 @@ const testimonials = [
 
 const projects = [
   {
-    name: "Car Rent",
+    name: "LaslesVPN",
     description:
-      "Web-based platform that allows users to search, book, and manage car rentals from various providers, providing a convenient and efficient solution for transportation needs.",
+      "LaslesVPN is a sleek, modern landing page built using Tailwind CSS. It presents a fictional VPN service, showcasing features, pricing tiers, and testimonials in a clean, user-friendly layout. The site is responsive (i.e. adapts to desktop, tablet, and mobile views) and demonstrates how a simple marketing / product landing site for a VPN service might look. It includes sections for features, pricing plans, user testimonials, and a call-to-action to encourage sign-ups.",
     tags: [
       {
-        name: "react",
+        name: "html",
         color: "blue-text-gradient",
       },
       {
-        name: "mongodb",
+        name: "css",
         color: "green-text-gradient",
       },
       {
@@ -214,50 +212,50 @@ const projects = [
         color: "pink-text-gradient",
       },
     ],
-    image: carrent,
-    source_code_link: "https://github.com/",
+    image: laslesvpn,
+    source_code_link: "https://github.com/Adityasharma3010/Tailwind-css-vpn",
   },
   {
-    name: "Job IT",
+    name: "WeatherApp",
     description:
-      "Web application that enables users to search for job openings, view estimated salary ranges for positions, and locate available jobs based on their current location.",
+      "WeatherApp is a modern, intuitive web application that lets users view current weather conditions for any city. It fetches live data (temperature, humidity, wind speed, weather description, icons) from a weather API, and displays it in a clean, responsive interface. The goal is to build a polished user interface for a practical, real-world utility while demonstrating front-end skills and handling asynchronous data.",
     tags: [
       {
         name: "react",
         color: "blue-text-gradient",
       },
       {
-        name: "restapi",
+        name: "js",
         color: "green-text-gradient",
       },
       {
-        name: "scss",
+        name: "tailwind",
         color: "pink-text-gradient",
       },
     ],
-    image: jobit,
-    source_code_link: "https://github.com/",
+    image: weatherapp,
+    source_code_link: "https://github.com/Adityasharma3010/React-WeatherApp",
   },
   {
-    name: "Trip Guide",
+    name: "Games Listing",
     description:
-      "A comprehensive travel booking platform that allows users to book flights, hotels, and rental cars, and offers curated recommendations for popular destinations.",
+      "The Games Listing App is a modern, responsive web application that showcases a curated list of video games. Designed with a focus on user experience and performance, the app provides an intuitive interface for browsing games across various genres. It features dynamic search and filtering capabilities, allowing users to easily find games based on their preferences. Each game entry includes essential details such as title, genre, release date, and a brief description.",
     tags: [
       {
-        name: "nextjs",
+        name: "react",
         color: "blue-text-gradient",
       },
       {
-        name: "supabase",
+        name: "react-router",
         color: "green-text-gradient",
       },
       {
-        name: "css",
+        name: "tailwind",
         color: "pink-text-gradient",
       },
     ],
-    image: tripguide,
-    source_code_link: "https://github.com/",
+    image: gameslisting,
+    source_code_link: "https://github.com/Adityasharma3010/Games-Listing",
   },
 ];
 

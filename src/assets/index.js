@@ -21,6 +21,9 @@ import redux from "./tech/redux.png";
 import tailwind from "./tech/tailwind.png";
 import typescript from "./tech/typescript.png";
 import threejs from "./tech/threejs.svg";
+import cplusplus from "./tech/Cplusplus.png";
+import unreal from "./tech/Unreal_Engine-Logo.png";
+import python from "./tech/Python.png";
 
 import meta from "./company/meta.png";
 import shopify from "./company/shopify.png";
@@ -32,6 +35,9 @@ import si from "./company/si.png";
 import carrent from "./carrent.png";
 import jobit from "./jobit.png";
 import tripguide from "./tripguide.png";
+import laslesvpn from "./LaslesVPN.png";
+import weatherapp from "./Weather-App.png";
+import gameslisting from "./Games-Listing.png";
 
 export {
   logo,
@@ -56,6 +62,9 @@ export {
   tailwind,
   typescript,
   threejs,
+  python,
+  unreal,
+  cplusplus,
   meta,
   shopify,
   starbucks,
@@ -65,4 +74,7 @@ export {
   carrent,
   jobit,
   tripguide,
+  laslesvpn,
+  weatherapp,
+  gameslisting,
 };
