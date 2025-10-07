@@ -3,7 +3,7 @@ import Tilt from "react-parallax-tilt";
 import { motion } from "framer-motion";
 
 import { styles } from "../styles";
-import { github } from "../assets";
+import { github, visit } from "../assets";
 import { SectionWrapper } from "../hoc";
 import { projects } from "../constants";
 import { fadeIn, textVariant } from "../utils/motion";
@@ -15,6 +15,7 @@ const ProjectCard = ({
   tags,
   image,
   source_code_link,
+  site_link,
 }) => {
   return (
     <motion.div
@@ -36,7 +37,7 @@ const ProjectCard = ({
             className="object-cover w-full h-full rounded-2xl"
           />
 
-          <div className="absolute inset-0 flex justify-end m-3 card-img_hover">
+          <div className="absolute inset-0 flex flex-col items-end gap-1 m-3 card-img_hover">
             <div
               onClick={() => window.open(source_code_link, "_blank")}
               className="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer black-gradient"
@@ -44,6 +45,16 @@ const ProjectCard = ({
               <img
                 src={github}
                 alt="source code"
+                className="object-contain w-1/2 h-1/2"
+              />
+            </div>
+            <div
+              onClick={() => window.open(site_link, "_blank")}
+              className="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer black-gradient"
+            >
+              <img
+                src={visit}
+                alt="Visit Site"
                 className="object-contain w-1/2 h-1/2"
               />
             </div>

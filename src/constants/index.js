@@ -96,22 +96,22 @@ const technologies = [
     name: "Three JS",
     icon: threejs,
   },
-  // {
-  //   name: "git",
-  //   icon: git,
-  // },
-  // {
-  //   name: "C++",
-  //   icon: cplusplus,
-  // },
-  // {
-  //   name: "Python",
-  //   icon: python,
-  // },
-  // {
-  //   name: "Unreal Engine",
-  //   icon: unreal,
-  // },
+  {
+    name: "git",
+    icon: git,
+  },
+  {
+    name: "C++",
+    icon: cplusplus,
+  },
+  {
+    name: "Python",
+    icon: python,
+  },
+  {
+    name: "Unreal Engine",
+    icon: unreal,
+  },
 ];
 
 const experiences = [
@@ -214,6 +214,7 @@ const projects = [
     ],
     image: laslesvpn,
     source_code_link: "https://github.com/Adityasharma3010/Tailwind-css-vpn",
+    site_link: "https://tailwind-css-vpn.vercel.app/",
   },
   {
     name: "WeatherApp",
@@ -235,6 +236,7 @@ const projects = [
     ],
     image: weatherapp,
     source_code_link: "https://github.com/Adityasharma3010/React-WeatherApp",
+    site_link: "https://weatherapp-30.vercel.app/",
   },
   {
     name: "Games Listing",
@@ -256,6 +258,7 @@ const projects = [
     ],
     image: gameslisting,
     source_code_link: "https://github.com/Adityasharma3010/Games-Listing",
+    site_link: "https://games-listing.vercel.app/",
   },
 ];
 
