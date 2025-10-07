@@ -31,10 +31,11 @@ const Contact = () => {
     e.preventDefault();
     setLoading(true);
 
+    emailjs;
     emailjs
       .send(
-        import.meta.env.VITE_SERVICE_ID, // ✅ correct naming
-        import.meta.env.VITE_TEMPLATE_ID, // ✅ correct naming
+        import.meta.env.VITE_SERVICE_ID,
+        import.meta.env.VITE_TEMPLATE_ID,
         {
           from_name: form.name,
           to_name: "Aditya Sharma",
@@ -42,7 +43,7 @@ const Contact = () => {
           to_email: "nakul.adi@gmail.com",
           message: form.message,
         },
-        import.meta.env.VITE_PUBLIC_KEY // ✅ correct naming
+        import.meta.env.VITE_PUBLIC_KEY
       )
       .then(
         () => {
@@ -57,8 +58,7 @@ const Contact = () => {
         },
         (error) => {
           setLoading(false);
-          console.error(error);
-
+          console.error("EmailJS error:", error);
           alert("Ahh, something went wrong. Please try again.");
         }
       );
