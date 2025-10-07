@@ -1,6 +1,7 @@
-import { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import emailjs from "@emailjs/browser";
+
 import { styles } from "../styles";
 import { EarthCanvas } from "./canvas";
 import { SectionWrapper } from "../hoc";
@@ -13,14 +14,60 @@ const Contact = () => {
     email: "",
     message: "",
   });
+
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {};
+  const handleChange = (e) => {
+    const { target } = e;
+    const { name, value } = target;
 
-  const handleSubmit = (e) => {};
+    setForm({
+      ...form,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    emailjs
+      .send(
+        import.meta.env.service_y9lvohn,
+        import.meta.env.template_cc2kkhg,
+        {
+          from_name: form.name,
+          to_name: "Aditya Sharma",
+          from_email: form.email,
+          to_email: "nakul.adi@gmail.com",
+          message: form.message,
+        },
+        import.meta.env.Zw96M8tGdQCCsPsFo
+      )
+      .then(
+        () => {
+          setLoading(false);
+          alert("Thank you. I will get back to you as soon as possible.");
+
+          setForm({
+            name: "",
+            email: "",
+            message: "",
+          });
+        },
+        (error) => {
+          setLoading(false);
+          console.error(error);
+
+          alert("Ahh, something went wrong. Please try again.");
+        }
+      );
+  };
 
   return (
-    <div className="flex flex-col-reverse gap-10 overflow-hidden xl:mt-12 xl:flex-row">
+    <div
+      className={`xl:mt-12 flex xl:flex-row flex-col-reverse gap-10 overflow-hidden`}
+    >
       <motion.div
         variants={slideIn("left", "tween", 0.2, 1)}
         className="flex-[0.75] bg-black-100 p-8 rounded-2xl"
@@ -40,18 +87,18 @@ const Contact = () => {
               name="name"
               value={form.name}
               onChange={handleChange}
-              placeholder="What's your name?"
+              placeholder="What's your good name?"
               className="px-6 py-4 font-medium text-white border-none rounded-lg outline-none bg-tertiary placeholder:text-secondary"
             />
           </label>
           <label className="flex flex-col">
-            <span className="mb-4 font-medium text-white">Your Email</span>
+            <span className="mb-4 font-medium text-white">Your email</span>
             <input
               type="email"
               name="email"
               value={form.email}
               onChange={handleChange}
-              placeholder="What's your email?"
+              placeholder="What's your web address?"
               className="px-6 py-4 font-medium text-white border-none rounded-lg outline-none bg-tertiary placeholder:text-secondary"
             />
           </label>
@@ -62,14 +109,14 @@ const Contact = () => {
               name="message"
               value={form.message}
               onChange={handleChange}
-              placeholder="What's do you want to say?"
+              placeholder="What you want to say?"
               className="px-6 py-4 font-medium text-white border-none rounded-lg outline-none bg-tertiary placeholder:text-secondary"
             />
           </label>
 
           <button
             type="submit"
-            className="px-8 py-3 font-bold text-white shadow-md outline-none bg-tertiary w-fit shadow-primary rounded-xl"
+            className="px-8 py-3 font-bold text-white shadow-md outline-none bg-tertiary rounded-xl w-fit shadow-primary"
           >
             {loading ? "Sending..." : "Send"}
           </button>
@@ -78,7 +125,7 @@ const Contact = () => {
 
       <motion.div
         variants={slideIn("right", "tween", 0.2, 1)}
-        className="xs:flex-1 xl:h-auto md:h-[550px] h-[350px]"
+        className="xl:flex-1 xl:h-auto md:h-[550px] h-[350px]"
       >
         <EarthCanvas />
       </motion.div>
