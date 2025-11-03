@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { BrowserRouter } from "react-router-dom";
 import {
   About,
@@ -10,10 +11,14 @@ import {
   Works,
   StarsCanvas,
 } from "./components";
+import LoadingScreen from "./components/LoadingScreen";
 
 const App = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
   return (
     <BrowserRouter>
+      {!isLoaded && <LoadingScreen onComplete={() => setIsLoaded(true)} />}{" "}
       <div className="relative z-0 bg-primary">
         <div className="bg-center bg-no-repeat bg-cover bg-hero-pattern">
           <Navbar />
