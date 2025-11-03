@@ -12,7 +12,6 @@ import {
   StarsCanvas,
 } from "./components";
 import LoadingScreen from "./components/LoadingScreen";
-import SceneManager from "./components/canvas/SceneManager"; 
 
 const App = () => {
   const [isLoaded, setIsLoaded] = useState(false);
