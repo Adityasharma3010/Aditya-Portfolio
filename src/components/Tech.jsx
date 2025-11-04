@@ -1,19 +1,17 @@
 import React, { Suspense, useRef } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Preload } from "@react-three/drei";
 import { SectionWrapper } from "../hoc";
 import { technologies } from "../constants";
 import Ball from "./canvas/Ball";
 import CanvasLoader from "./Loader";
 
-// ✅ Create a component that runs inside <Canvas>
 const RotatingRing = () => {
-  const groupRef = React.useRef();
+  const groupRef = useRef();
 
-  // useFrame hook is safe here, because it's inside Canvas
   useFrame((_, delta) => {
     if (groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.4;
+      groupRef.current.rotation.y += delta * 0.4; // smooth rotation
     }
   });
 
@@ -47,10 +45,7 @@ const Tech = () => {
         <Suspense fallback={<CanvasLoader />}>
           <ambientLight intensity={0.7} />
           <directionalLight position={[5, 5, 5]} />
-
-          {/* ✅ Rotating ring component inside Canvas */}
           <RotatingRing />
-
           <OrbitControls enableZoom={false} enablePan={false} />
         </Suspense>
         <Preload all />
