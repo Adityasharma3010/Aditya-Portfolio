@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import React, { Suspense, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Preload } from "@react-three/drei";
 import { SectionWrapper } from "../hoc";
