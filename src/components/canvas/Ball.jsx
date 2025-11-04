@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useLoader } from "@react-three/fiber";
 import { Decal, Float, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -11,14 +11,12 @@ const Ball = ({ imgUrl, scale = 2.75 }) => {
   const targetRotation = new THREE.Vector3(0, 0, 0);
   const baseStiffness = 0.05;
   const damping = 0.85;
-
   const lastPointer = useRef({ x: 0, y: 0 });
   const isDragging = useRef(false);
 
   useFrame(() => {
     if (!meshRef.current) return;
     const rot = meshRef.current.rotation;
-
     const speed = rotationVelocity.current.length();
     const stiffness = baseStiffness + speed * 0.5;
 
@@ -35,7 +33,7 @@ const Ball = ({ imgUrl, scale = 2.75 }) => {
   });
 
   return (
-    <Float speed={1.75} rotationIntensity={1} floatIntensity={2}>
+    <Float speed={1.5} rotationIntensity={1} floatIntensity={1.5}>
       <mesh ref={meshRef} castShadow receiveShadow scale={scale}>
         <icosahedronGeometry args={[1, 1]} />
         <meshStandardMaterial
