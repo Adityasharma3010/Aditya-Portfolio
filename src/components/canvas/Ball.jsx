@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
-import { useFrame, useLoader } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import { Decal, Float, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
-const Ball = ({ imgUrl, scale = 2.75 }) => {
+const Ball = ({ imgUrl, scale = 2 }) => {
   const meshRef = useRef();
   const [decal] = useTexture([imgUrl]);
 
@@ -11,15 +11,12 @@ const Ball = ({ imgUrl, scale = 2.75 }) => {
   const targetRotation = new THREE.Vector3(0, 0, 0);
   const baseStiffness = 0.05;
   const damping = 0.85;
-  const lastPointer = useRef({ x: 0, y: 0 });
-  const isDragging = useRef(false);
 
   useFrame(() => {
     if (!meshRef.current) return;
     const rot = meshRef.current.rotation;
     const speed = rotationVelocity.current.length();
     const stiffness = baseStiffness + speed * 0.5;
-
     const forceX = (targetRotation.x - rot.x) * stiffness;
     const forceY = (targetRotation.y - rot.y) * stiffness;
 
