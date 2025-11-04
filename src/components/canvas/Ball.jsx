@@ -1,30 +1,42 @@
-import React, { Suspense, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber"; // ✅ FIXED
-import {
-  Decal,
-  Float,
-  OrbitControls,
-  Preload,
-  useTexture,
-} from "@react-three/drei";
-import CanvasLoader from "../Loader";
+import React, { useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+import { Decal, Float, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
-const Ball = ({ imgUrl }) => {
+const Ball = ({ imgUrl, scale = 2.75 }) => {
   const meshRef = useRef();
   const [decal] = useTexture([imgUrl]);
 
+  const rotationVelocity = useRef(new THREE.Vector3(0, 0, 0));
+  const targetRotation = new THREE.Vector3(0, 0, 0);
+  const baseStiffness = 0.05;
+  const damping = 0.85;
+
+  const lastPointer = useRef({ x: 0, y: 0 });
+  const isDragging = useRef(false);
+
   useFrame(() => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += 0.01; // smooth rotation
-    }
+    if (!meshRef.current) return;
+    const rot = meshRef.current.rotation;
+
+    const speed = rotationVelocity.current.length();
+    const stiffness = baseStiffness + speed * 0.5;
+
+    const forceX = (targetRotation.x - rot.x) * stiffness;
+    const forceY = (targetRotation.y - rot.y) * stiffness;
+
+    rotationVelocity.current.x =
+      (rotationVelocity.current.x + forceX) * damping;
+    rotationVelocity.current.y =
+      (rotationVelocity.current.y + forceY) * damping;
+
+    rot.x += rotationVelocity.current.x;
+    rot.y += rotationVelocity.current.y;
   });
 
   return (
     <Float speed={1.75} rotationIntensity={1} floatIntensity={2}>
-      <ambientLight intensity={0.25} />
-      <directionalLight position={[0, 0, 0.05]} />
-      <mesh ref={meshRef} castShadow receiveShadow scale={2.75}>
+      <mesh ref={meshRef} castShadow receiveShadow scale={scale}>
         <icosahedronGeometry args={[1, 1]} />
         <meshStandardMaterial
           color="#fff8eb"
@@ -34,7 +46,7 @@ const Ball = ({ imgUrl }) => {
         />
         <Decal
           position={[0, 0, 1]}
-          rotation={[2 * Math.PI, 0, 6.25]}
+          rotation={[0, 0, 0]}
           scale={1}
           map={decal}
         />
@@ -43,14 +55,4 @@ const Ball = ({ imgUrl }) => {
   );
 };
 
-const BallCanvas = ({ icon }) => (
-  <Canvas frameloop="demand" dpr={[1, 2]} gl={{ preserveDrawingBuffer: true }}>
-    <Suspense fallback={<CanvasLoader />}>
-      <OrbitControls enableZoom={false} />
-      <Ball imgUrl={icon} />
-    </Suspense>
-    <Preload all />
-  </Canvas>
-);
-
-export default BallCanvas;
+export default Ball;
