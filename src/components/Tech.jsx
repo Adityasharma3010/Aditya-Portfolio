@@ -1,21 +1,41 @@
-import { Suspense, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Suspense } from "react";
+import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Preload } from "@react-three/drei";
 import { SectionWrapper } from "../hoc";
 import { technologies } from "../constants";
 import Ball from "./canvas/Ball";
 import CanvasLoader from "./Loader";
 
-const Tech = () => {
-  const groupRef = useRef();
+// ✅ Create a component that runs inside <Canvas>
+const RotatingRing = () => {
+  const groupRef = React.useRef();
 
-  // Rotate the entire ring of balls slowly
-  useFrame((state, delta) => {
+  // useFrame hook is safe here, because it's inside Canvas
+  useFrame((_, delta) => {
     if (groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.4; // Adjust for rotation speed
+      groupRef.current.rotation.y += delta * 0.4;
     }
   });
 
+  return (
+    <group ref={groupRef}>
+      {technologies.map((tech, index) => {
+        const radius = 6;
+        const angle = (index / technologies.length) * Math.PI * 2;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius * 0.5;
+
+        return (
+          <group key={tech.name} position={[x, y, 0]}>
+            <Ball imgUrl={tech.icon} scale={1.5} />
+          </group>
+        );
+      })}
+    </group>
+  );
+};
+
+const Tech = () => {
   return (
     <div className="w-full h-[600px]">
       <Canvas
@@ -28,21 +48,8 @@ const Tech = () => {
           <ambientLight intensity={0.7} />
           <directionalLight position={[5, 5, 5]} />
 
-          {/* Rotating group */}
-          <group ref={groupRef}>
-            {technologies.map((tech, index) => {
-              const radius = 6;
-              const angle = (index / technologies.length) * Math.PI * 2;
-              const x = Math.cos(angle) * radius;
-              const y = Math.sin(angle) * radius * 0.5; // elliptical ring
-
-              return (
-                <group key={tech.name} position={[x, y, 0]}>
-                  <Ball imgUrl={tech.icon} scale={1.5} />
-                </group>
-              );
-            })}
-          </group>
+          {/* ✅ Rotating ring component inside Canvas */}
+          <RotatingRing />
 
           <OrbitControls enableZoom={false} enablePan={false} />
         </Suspense>
