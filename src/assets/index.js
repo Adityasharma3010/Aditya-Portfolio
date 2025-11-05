@@ -18,7 +18,10 @@ import reactjs from "./tech/reactjs.png";
 import tailwind from "./tech/tailwind.png";
 import threejs from "./tech/threejs.svg";
 import cplusplus from "./tech/Cplusplus.png";
-import unreal from "./tech/Unreal_Engine-Logo.png";
+import unreal1 from "./tech/Unreal_Engine-Logo.png";
+import unreal from "./tech/Unreal_Engine-Logo.webp";
+import mysql from "./tech/mysql-icon.svg";
+import wordpress from "./tech/Wordpress-Logo.svg";
 import python from "./tech/Python.png";
 
 import bcit from "./company/bcit.png";
@@ -48,7 +51,10 @@ export {
   tailwind,
   threejs,
   python,
+  unreal1,
   unreal,
+  mysql,
+  wordpress,
   cplusplus,
   bcit,
   si,

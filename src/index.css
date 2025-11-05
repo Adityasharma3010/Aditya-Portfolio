@@ -139,6 +139,16 @@
   transform: translateZ(0);
 }
 
+.tech-icon {
+  transform: perspective(600px) translateZ(0);
+  transition: transform 0.5s ease;
+}
+
+.tech-card:hover .tech-icon {
+  transform: perspective(600px) rotateX(15deg) rotateY(-15deg) translateZ(20px)
+    scale(1.1);
+}
+
 .animate-blink {
   animation: blink 0.5s step-end infinite;
 }

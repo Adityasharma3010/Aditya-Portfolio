@@ -11,6 +11,8 @@ import {
   nodejs,
   git,
   unreal,
+  mysql,
+  wordpress,
   cplusplus,
   python,
   bcit,
@@ -85,8 +87,16 @@ const technologies = [
     icon: threejs,
   },
   {
+    name: "MySql",
+    icon: mysql,
+  },
+  {
     name: "git",
     icon: git,
+  },
+  {
+    name: "Word Press",
+    icon: wordpress,
   },
   {
     name: "C++",
@@ -107,7 +117,7 @@ const experiences = [
     title: "Junior Web Developer (React)",
     company_name: "Black Cap It",
     icon: bcit,
-    iconBg: "#383E56",
+    iconBg: "#E6DEDD",
     date: "Aug 2025 - Present",
     points: [
       "Shifted focus to React.js, deepening skills in modern JavaScript frameworks.",
@@ -132,7 +142,7 @@ const experiences = [
     title: "Trainee Web Developer",
     company_name: "Black Cap It",
     icon: bcit,
-    iconBg: "#383E56",
+    iconBg: "#E6DEDD",
     date: "Dec 2023 - May 2024",
     points: [
       "Worked primarily on the front end of a management system, focusing on improving the user interface and experience.",

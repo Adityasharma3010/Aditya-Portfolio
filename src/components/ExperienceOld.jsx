@@ -11,6 +11,7 @@ import { styles } from "../styles";
 import { experiences } from "../constants";
 import { SectionWrapper } from "../hoc";
 import { textVariant } from "../utils/motion";
+import CodeIcon from "../assets/code-icon.png";
 
 const ExperienceCard = ({ experience }) => {
   return (
@@ -42,11 +43,11 @@ const ExperienceCard = ({ experience }) => {
         </p>
       </div>
 
-      <ul className="mt-5 space-y-2">
+      <ul className="mt-5 ml-5 space-y-2 list-disc">
         {experience.points.map((point, index) => (
           <li
             key={`experience-point-${index}`}
-            className="text-white-100 text-[14px] pl-5 tracking-wider relative before:content-[''] before:w-4 before:h-4 before:bg-[url(./assets/code-icon.png)] before:bg-cover before:bg-center before:flex before:absolute before:left-0 before:top-0.5"
+            className="text-white-100 text-[14px] pl-1 tracking-wider"
           >
             {point}
           </li>
