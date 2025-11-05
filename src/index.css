@@ -50,7 +50,7 @@
 }
 
 .green-pink-gradient-shadow:hover {
-  box-shadow: 0 0 15px #00cea8, 0 0 30px #bf61ff;
+  box-shadow: inset 0 0 15px #00cea8, 0 0 30px #bf61ff;
 }
 
 .orange-text-gradient {
