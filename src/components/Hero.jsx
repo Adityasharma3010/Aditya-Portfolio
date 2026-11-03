@@ -1,108 +1,169 @@
-import { motion } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
-import { styles } from "../styles";
-import { ComputersCanvas } from "./canvas";
+import { useEffect, useRef, useState } from "react";
+import { gsap, ScrollTrigger, SplitText, useGSAP, prefersReducedMotion } from "../lib/gsap";
+import { profile } from "../data";
+import Magnetic from "./Magnetic";
+import { useLenis } from "./SmoothScroll";
 
-const Hero = () => {
-  const [textIndex, setTextIndex] = useState(0);
-  const [displayedText, setDisplayedText] = useState("");
-  const texts = ["Web Developer", "Game Developer", "Software Developer"];
-
-  const charIndexRef = useRef(0);
-  const isDeletingRef = useRef(false);
-
+// live local time, a small human touch
+const useClock = () => {
+  const fmt = () => new Date().toLocaleTimeString("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit" });
+  const [t, setT] = useState(fmt);
   useEffect(() => {
-    let timeout;
-    const currentText = texts[textIndex];
+    const id = setInterval(() => setT(fmt()), 20000);
+    return () => clearInterval(id);
+  }, []);
+  return t;
+};
 
-    const typeWriter = () => {
-      const currentIndex = charIndexRef.current;
-      const isDeleting = isDeletingRef.current;
+const Hero = ({ ready }) => {
+  const root = useRef(null);
+  const lenis = useLenis();
+  const time = useClock();
 
-      if (!isDeleting && currentIndex < currentText.length) {
-        setDisplayedText((prev) => prev + currentText[currentIndex]);
-        charIndexRef.current += 1;
-        timeout = setTimeout(typeWriter, 100);
-      } else if (isDeleting && currentIndex > 0) {
-        setDisplayedText((prev) => prev.slice(0, currentIndex - 1));
-        charIndexRef.current -= 1;
-        timeout = setTimeout(typeWriter, 50);
-      } else {
-        isDeletingRef.current = !isDeleting;
-        if (!isDeletingRef.current) {
-          setTextIndex((prevIndex) => (prevIndex + 1) % texts.length);
-          charIndexRef.current = 0;
-        }
-        timeout = setTimeout(typeWriter, 1000); // pause before switching
+  useGSAP(
+    () => {
+      if (!ready) return;
+      const reduce = prefersReducedMotion();
+
+      // ---- intro: split headline into chars, rise from behind a mask ----
+      const split = new SplitText(".hero-title", { type: "lines,chars", mask: "lines" });
+      const intro = gsap.timeline({ defaults: { ease: "power4.out" } });
+      if (!reduce) {
+        intro
+          .from(split.chars, { yPercent: 120, rotate: 8, duration: 1.2, stagger: 0.02 })
+          .from(".hero-fade", { opacity: 0, y: 24, duration: 1, stagger: 0.12 }, "-=0.8")
+          .from(".hero-orb", { scale: 0, opacity: 0, duration: 1.6, stagger: 0.15, ease: "expo.out" }, 0)
+          .from(".hero-line", { scaleX: 0, duration: 1.4, ease: "power3.inOut" }, "-=1.2");
       }
-    };
 
-    timeout = setTimeout(typeWriter, 500);
+      // ---- rotating role text ----
+      const roles = gsap.utils.toArray(".role");
+      gsap.set(roles, { yPercent: 110 });
+      const loop = gsap.timeline({ repeat: -1, delay: 1.2 });
+      roles.forEach((r) => {
+        loop.to(r, { yPercent: 0, duration: 0.7, ease: "power4.out" })
+          .to(r, { yPercent: -110, duration: 0.6, ease: "power4.in" }, "+=1.4");
+      });
 
-    return () => clearTimeout(timeout);
-  }, [textIndex]);
+      if (reduce) return () => split.revert();
+
+      // ---- scroll parallax: layers travel at different speeds, title fades + shrinks ----
+      const scroll = { trigger: root.current, start: "top top", end: "bottom top", scrub: true };
+      gsap.to(".hero-title-wrap", { yPercent: 25, opacity: 0.1, scale: 0.94, ease: "none", scrollTrigger: scroll });
+      gsap.to(".hero-orb-a", { yPercent: -80, ease: "none", scrollTrigger: scroll });
+      gsap.to(".hero-orb-b", { yPercent: 60, xPercent: -20, ease: "none", scrollTrigger: scroll });
+      gsap.to(".hero-bgword", { xPercent: -25, ease: "none", scrollTrigger: scroll });
+      gsap.to(".hero-scroll", { yPercent: -60, opacity: 0, ease: "none", scrollTrigger: scroll });
+
+      // ---- rotating badge: spins constantly, spins faster when you scroll ----
+      const spin = gsap.to(".hero-badge-ring", { rotate: 360, duration: 18, ease: "none", repeat: -1 });
+      ScrollTrigger.create({
+        start: 0,
+        end: "max",
+        onUpdate: (self) => {
+          const boost = 1 + Math.min(Math.abs(self.getVelocity()) / 300, 8);
+          gsap.to(spin, { timeScale: self.direction * boost, duration: 0.3, overwrite: true });
+          gsap.to(spin, { timeScale: 1, duration: 1.2, delay: 0.3 });
+        },
+      });
+
+      // ---- pointer parallax (desktop only) ----
+      const mm = gsap.matchMedia();
+      mm.add("(hover: hover) and (pointer: fine)", () => {
+        const layers = [
+          { sel: ".hero-orb-a", d: 50 },
+          { sel: ".hero-orb-b", d: -35 },
+          { sel: ".hero-title-wrap", d: 12 },
+          { sel: ".hero-bgword", d: -18 },
+        ].map(({ sel, d }) => ({
+          d,
+          x: gsap.quickTo(sel, "x", { duration: 1.2, ease: "power3" }),
+          y: gsap.quickTo(sel, "y", { duration: 1.2, ease: "power3" }),
+        }));
+        const move = (e) => {
+          const nx = e.clientX / innerWidth - 0.5;
+          const ny = e.clientY / innerHeight - 0.5;
+          layers.forEach((l) => { l.x(nx * l.d); l.y(ny * l.d); });
+        };
+        window.addEventListener("pointermove", move);
+        return () => window.removeEventListener("pointermove", move);
+      });
+
+      return () => { split.revert(); mm.revert(); };
+    },
+    { scope: root, dependencies: [ready] }
+  );
+
+  const scrollToWork = () => {
+    const el = document.getElementById("work");
+    lenis ? lenis.scrollTo(el, { duration: 1.6 }) : el?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
-    <section className="relative w-full h-screen mx-auto">
-      <div
-        className={`${styles.paddingX} absolute inset-0 top-[120px] max-w-7xl mx-auto flex flex-row items-start gap-5`}
-      >
-        <div className="flex flex-col items-center justify-center mt-5">
-          <div className="w-5 h-5 bg-[#915eff] rounded-full" />
-          <div className="w-1 h-44 sm:h-80 violet-gradient" />
-        </div>
-        <div>
-          <h1 className={`${styles.heroHeadText} text-white`}>
-            Hi, I'm <span className="text-[#915eff]">Aditya</span>
-          </h1>
-          <p className={`${styles.heroSubText} mt-2 text-white-100`}>
-            An enthusiastic<span className="hidden sm:inline">&nbsp;</span>
-            <span className="inline sm:hidden"> </span>
-            <span
-              style={{
-                display: "inline",
-                overflow: "hidden",
-                whiteSpace: "nowrap",
-                borderRight: "3px solid #fff", // Cursor style
-              }}
-            >
-              <span style={{ color: "#fff" }}>
-                {displayedText.slice(0, -1)}
-              </span>
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-                style={{ color: "#fff" }}
-              >
-                {displayedText.slice(-1)}
-              </motion.span>
-            </span>{" "}
-            <br />
-            looking for new opportunities to <br className="hidden sm:block" />
-            explore the industry.
-          </p>
-        </div>
+    <section ref={root} className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden px-5 pb-10 pt-32 sm:px-10">
+      {/* parallax layers */}
+      <div className="hero-orb hero-orb-a pointer-events-none absolute -right-[10vw] top-[12vh] h-[45vmax] w-[45vmax] rounded-full bg-accent/25 blur-[90px] will-change-transform" />
+      <div className="hero-orb hero-orb-b pointer-events-none absolute -left-[15vw] bottom-[5vh] h-[35vmax] w-[35vmax] rounded-full bg-fg/10 blur-[110px] will-change-transform" />
+      <div className="hero-bgword pointer-events-none absolute left-0 top-[18vh] select-none whitespace-nowrap font-display text-[32vw] font-extrabold leading-none text-outline opacity-60 will-change-transform" aria-hidden="true">
+        DEVELOPER
       </div>
 
-      <ComputersCanvas />
+      {/* rotating badge */}
+      <div className="hero-scroll absolute right-5 top-32 hidden h-36 w-36 sm:block md:right-10 md:top-36 md:h-44 md:w-44">
+       <div className="hero-fade relative flex h-full w-full items-center justify-center">
+        <svg className="hero-badge-ring absolute inset-0 h-full w-full" viewBox="0 0 200 200" aria-hidden="true">
+          <defs><path id="badgePath" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0" /></defs>
+          <text className="fill-fg font-mono text-[13px] uppercase">
+            <textPath href="#badgePath" textLength="498" lengthAdjust="spacing">Full stack · React · GSAP · WordPress · </textPath>
+          </text>
+        </svg>
+        <span className="grid h-14 w-14 place-items-center rounded-full bg-accent font-display text-lg font-extrabold text-accent-ink">AS</span>
+       </div>
+      </div>
 
-      <div className="absolute flex items-center justify-center w-full xs:bottom-10 bottom-32">
-        <a href="#about">
-          <div className="w-[35px] h-[64px] rounded-3xl border-4 border-secondary flex justify-center items-start p-2">
-            <motion.div
-              animate={{
-                y: [0, 24, 0],
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                repeatType: "loop",
-              }}
-              className="w-3 h-3 mb-1 rounded-full bg-secondary"
-            />
+      <div className="relative mx-auto w-full max-w-[1500px]">
+        <div className="hero-scroll mb-6">
+          <p className="hero-fade flex items-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-accent" />
+            Available for work · India · {time} IST
+          </p>
+        </div>
+
+        <div className="hero-title-wrap origin-bottom will-change-transform">
+          <h1 className="hero-title font-display text-[clamp(3.2rem,13.5vw,12rem)] font-extrabold leading-[0.88] tracking-[-0.04em]">
+            Aditya
+            <br />
+            <span className="text-accent">Sharma</span>
+          </h1>
+        </div>
+
+        <div className="hero-line my-8 h-px origin-left bg-line/20" />
+
+        <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
+          <div className="hero-fade">
+            <div className="mask relative h-9 sm:h-11">
+              {profile.roles.map((r) => (
+                <div key={r} className="role absolute font-display text-3xl font-semibold sm:text-4xl">{r}</div>
+              ))}
+            </div>
+            <p className="mt-4 max-w-md text-balance text-base text-muted sm:text-lg">
+              I build fast, animated web experiences with React, GSAP and WordPress.
+            </p>
           </div>
-        </a>
+
+          <div className="hero-fade flex items-center gap-4">
+            <Magnetic>
+              <button onClick={scrollToWork} data-cursor="Go" className="rounded-full bg-accent px-7 py-4 font-mono text-xs font-medium uppercase tracking-widest text-accent-ink">
+                See my work ↓
+              </button>
+            </Magnetic>
+            <Magnetic>
+              <a href={`mailto:${profile.email}`} className="inline-block rounded-full border hairline px-7 py-4 font-mono text-xs uppercase tracking-widest transition-colors hover:bg-fg/10">
+                Say hi
+              </a>
+            </Magnetic>
+          </div>
+        </div>
       </div>
     </section>
   );

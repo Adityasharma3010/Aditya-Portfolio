@@ -1,0 +1,123 @@
+{
+  "game-deal-alerts": {
+    "repo": "Adityasharma3010/game-deal-alerts",
+    "createdAt": "2026-10-14T11:49:41Z",
+    "pushedAt": "2026-11-02T05:06:41Z",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "languages": {
+      "JavaScript": 199975,
+      "CSS": 88978,
+      "PLpgSQL": 42861,
+      "HTML": 414
+    }
+  },
+  "ordly": {
+    "repo": "Adityasharma3010/ordly",
+    "createdAt": "2026-10-14T05:08:08Z",
+    "pushedAt": "2026-11-02T04:57:06Z",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "languages": {
+      "JavaScript": 773345,
+      "PLpgSQL": 56775,
+      "TypeScript": 28607,
+      "HTML": 20102,
+      "CSS": 8671
+    }
+  },
+  "clam-generator": {
+    "repo": "Adityasharma3010/Clam-Generator",
+    "createdAt": "2026-08-07T07:27:14Z",
+    "pushedAt": "2026-10-31T15:31:41Z",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "languages": {
+      "JavaScript": 43594,
+      "CSS": 3122,
+      "HTML": 1371
+    }
+  },
+  "free-games-tracker": {
+    "repo": "Adityasharma3010/FreeGamesTracker",
+    "createdAt": "2026-08-24T12:50:56Z",
+    "pushedAt": "2026-10-27T04:23:59Z",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "languages": {
+      "JavaScript": 538739,
+      "CSS": 3987,
+      "HTML": 1366
+    }
+  },
+  "binkeyit": {
+    "repo": "Adityasharma3010/Binkeyit",
+    "createdAt": "2025-12-03T09:56:55Z",
+    "pushedAt": "2026-10-27T04:22:01Z",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "languages": {
+      "JavaScript": 145885,
+      "CSS": 1955,
+      "HTML": 355
+    }
+  },
+  "book-store-app": {
+    "repo": "Adityasharma3010/bookStoreApp",
+    "createdAt": "2025-12-03T04:13:12Z",
+    "pushedAt": "2026-02-19T12:05:52Z",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "languages": {
+      "JavaScript": 42936,
+      "CSS": 1390,
+      "HTML": 358
+    }
+  },
+  "games-listing": {
+    "repo": "Adityasharma3010/Games-Listing",
+    "createdAt": "2025-07-25T20:29:34Z",
+    "pushedAt": "2025-10-06T09:57:22Z",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "languages": {
+      "JavaScript": 73064,
+      "CSS": 12436,
+      "TypeScript": 432,
+      "HTML": 387
+    }
+  },
+  "weather-app": {
+    "repo": "Adityasharma3010/React-WeatherApp",
+    "createdAt": "2025-07-21T11:48:59Z",
+    "pushedAt": "2025-10-06T09:56:51Z",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "languages": {
+      "JavaScript": 18766,
+      "CSS": 2564,
+      "HTML": 491
+    }
+  },
+  "laslesvpn": {
+    "repo": "Adityasharma3010/Tailwind-css-vpn",
+    "createdAt": "2025-07-01T07:10:20Z",
+    "pushedAt": "2025-11-04T05:15:34Z",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "languages": {
+      "HTML": 46496,
+      "CSS": 44214,
+      "JavaScript": 11652
+    }
+  }
+}

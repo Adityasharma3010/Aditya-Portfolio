@@ -1,79 +1,122 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { styles } from "../styles";
-import { navLinks } from "../constants";
-import { logo, menu, close } from "../assets";
-import { nav } from "framer-motion/client";
+import { useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { gsap, ScrollTrigger, useGSAP } from "../lib/gsap";
+import { navLinks, profile } from "../data";
+import { TLink, usePageNav } from "./PageTransition";
+import { useLenis } from "./SmoothScroll";
+import ThemeToggle from "./ThemeToggle";
 
-const Navbar = () => {
-  const [active, setActive] = useState("");
-  const [toggle, setToggle] = useState(false);
+const Navbar = ({ ready }) => {
+  const root = useRef(null);
+  const menu = useRef(null);
+  const tl = useRef(null);
+  const [open, setOpen] = useState(false);
+  const lenis = useLenis();
+  const { go } = usePageNav();
+  const { pathname } = useLocation();
+
+  // slide in after the loader, hide on scroll down, show on scroll up
+  useGSAP(
+    () => {
+      if (!ready) return;
+      gsap.from(root.current, { yPercent: -120, duration: 1, ease: "power4.out", delay: 0.2 });
+      ScrollTrigger.create({
+        start: 80,
+        end: "max",
+        onUpdate: (self) =>
+          gsap.to(root.current, {
+            yPercent: self.direction === 1 && !open ? -120 : 0,
+            duration: 0.4,
+            ease: "power3.out",
+            overwrite: true,
+          }),
+      });
+    },
+    { scope: root, dependencies: [ready] }
+  );
+
+  // fullscreen mobile menu timeline
+  useGSAP(
+    () => {
+      tl.current = gsap
+        .timeline({ paused: true, defaults: { ease: "power4.inOut" } })
+        .set(menu.current, { display: "flex" })
+        .fromTo(menu.current, { clipPath: "circle(0% at 100% 0%)" }, { clipPath: "circle(150% at 100% 0%)", duration: 0.9 })
+        .from(".mm-link", { yPercent: 120, duration: 0.8, stagger: 0.07, ease: "power4.out" }, "-=0.5")
+        .from(".mm-foot", { opacity: 0, y: 20, duration: 0.5 }, "-=0.4");
+    },
+    { scope: menu }
+  );
+
+  const toggleMenu = (next) => {
+    setOpen(next);
+    if (next) { lenis?.stop(); tl.current.timeScale(1).play(); }
+    else { lenis?.start(); tl.current.timeScale(1.4).reverse(); }
+  };
+
+  const jump = (id) => {
+    const run = () => {
+      const el = document.getElementById(id);
+      if (el) lenis ? lenis.scrollTo(el, { offset: -20, duration: 1.4 }) : el.scrollIntoView();
+    };
+    if (open) toggleMenu(false);
+    if (pathname !== "/") { go("/"); setTimeout(run, 1400); } else run();
+  };
 
   return (
-    <nav
-      className={`${styles.paddingX} w-full flex items-center py-5 fixed top-0 z-20 bg-primary`}
-    >
-      <div className="flex items-center justify-between w-full mx-auto max-w-7xl">
-        <Link
-          to="/"
-          className="flex items-center gap-2"
-          onClick={() => {
-            setActive("");
-            window.scrollTo(0, 0);
-          }}
-        >
-          <img src={logo} alt="Logo" className="object-contain w-9 h-9" />
-          <p className="flex text-lg font-bold text-white cursor-pointer">
-            Aditya Sharma
-          </p>
-        </Link>
+    <>
+      <header ref={root} className="fixed inset-x-0 top-0 z-50 px-5 py-4 sm:px-10">
+        <nav className="mx-auto flex max-w-[1500px] items-center justify-between rounded-full border hairline bg-bg/60 px-5 py-2 backdrop-blur-xl">
+          <TLink to="/" className="font-display text-xl font-bold tracking-tight" data-cursor="Home">
+            AS<span className="text-accent">.</span>
+          </TLink>
 
-        <ul className="flex-row hidden gap-10 list-none sm:flex">
-          {navLinks.map((link) => (
-            <li
-              key={link.id}
-              className={`${
-                active === link.title ? "text-white" : "text-secondary"
-              } hover:text-white text-[18px] font-medium cursor-pointer`}
-              onClick={() => setActive(link.title)}
+          <ul className="hidden items-center gap-8 md:flex">
+            {navLinks.map((l, i) => (
+              <li key={l.id}>
+                <button onClick={() => jump(l.id)} className="group relative overflow-hidden font-mono text-xs uppercase tracking-widest text-muted transition-colors hover:text-fg">
+                  <span className="mr-1 text-accent">0{i + 1}</span>
+                  {l.title}
+                  <span className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-500 group-hover:scale-x-100" />
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              onClick={() => toggleMenu(!open)}
+              className="grid h-10 w-10 place-items-center rounded-full border hairline md:hidden"
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
             >
-              <a href={`#${link.id}`}>{link.title}</a>
+              <span className="relative block h-3 w-5">
+                <span className={`absolute left-0 h-px w-5 bg-fg transition-all duration-300 ${open ? "top-1/2 rotate-45" : "top-0"}`} />
+                <span className={`absolute left-0 h-px w-5 bg-fg transition-all duration-300 ${open ? "top-1/2 -rotate-45" : "bottom-0"}`} />
+              </span>
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      <div ref={menu} className="fixed inset-0 z-40 hidden flex-col justify-between bg-bg px-8 pb-10 pt-28 md:!hidden">
+        <ul className="flex flex-col gap-2">
+          {navLinks.map((l, i) => (
+            <li key={l.id} className="mask">
+              <button onClick={() => jump(l.id)} className="mm-link flex items-baseline gap-4 font-display text-6xl font-bold tracking-tight">
+                <span className="font-mono text-xs text-accent">0{i + 1}</span>
+                {l.title}
+              </button>
             </li>
           ))}
         </ul>
-
-        <div className="flex items-start justify-end flex-1 sm:hidden">
-          <img
-            src={toggle ? close : menu}
-            alt="Menu"
-            className="object-contain cursor-pointer w-7 h-7"
-            onClick={() => setToggle(!toggle)}
-          />
-          <div
-            className={`${
-              toggle ? "flex" : "hidden"
-            } p-6 black-gradient absolute top-20 right-0 mx-4 my-2 rounded-xl min-w-[140px] z-10`}
-          >
-            <ul className="flex flex-col items-start justify-end gap-4 list-none">
-              {navLinks.map((link) => (
-                <li
-                  key={link.id}
-                  className={`${
-                    active === link.title ? "text-white" : "text-secondary"
-                  } font-poppins font-medium cursor-pointer text-[16px]`}
-                  onClick={() => {
-                    setToggle(!toggle);
-                    setActive(link.title);
-                  }}
-                >
-                  <a href={`#${link.id}`}>{link.title}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <div className="mm-foot font-mono text-xs text-muted">
+          <a href={`mailto:${profile.email}`} className="block text-fg">{profile.email}</a>
+          <a href={profile.github} target="_blank" rel="noreferrer" className="mt-2 block">GitHub ↗</a>
         </div>
       </div>
-    </nav>
+    </>
   );
 };
 
