@@ -88,7 +88,7 @@ const Projects = () => {
       mm.add("(max-width: 1023px)", () => {
         gsap.utils.toArray(".project-card").forEach((card) => {
           gsap.from(card, {
-            clipPath: "inset(12% 8% 12% 8% round 2rem)", opacity: 0.4, duration: 1, ease: "power3.out",
+            clipPath: "inset(12% 8% 12% 8% round 2rem)", opacity: 0.4, duration: 1, ease: "power3.out", clearProps: "clipPath",
             scrollTrigger: { trigger: card, start: "top 88%" },
           });
           gsap.fromTo(card.querySelector(".card-img"), { yPercent: -6, xPercent: 0 }, {
@@ -110,7 +110,7 @@ const Projects = () => {
       </div>
 
       <div className="pin-area relative flex flex-col justify-center overflow-hidden pb-24 lg:min-h-screen lg:pb-0">
-        <div ref={track} className="flex flex-col gap-6 px-5 will-change-transform sm:px-10 lg:flex-row lg:gap-10 lg:pl-[8vw] lg:pr-[8vw]">
+        <div ref={track} className="project-track flex flex-col gap-6 px-5 will-change-transform sm:px-10 lg:flex-row lg:gap-10 lg:pl-[8vw] lg:pr-[8vw]">
           {projects.map((p) => (
             <Card key={p.slug} p={p} />
           ))}

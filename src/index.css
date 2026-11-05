@@ -5,6 +5,10 @@
 /* ---------- theme tokens (space separated RGB so tailwind opacity works) ---------- */
 :root,
 [data-theme="dark"] {
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --accent2: 114 227 255;
+  --accent3: 242 114 200;
   --bg: 11 11 13;
   --surface: 20 20 24;
   --fg: 243 240 233;
@@ -17,6 +21,10 @@
 }
 
 [data-theme="light"] {
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --accent2: 0 140 255;
+  --accent3: 220 40 150;
   --bg: 244 241 235;
   --surface: 252 250 246;
   --fg: 17 17 20;
@@ -25,6 +33,44 @@
   --accent: 91 44 255;
   --accent-ink: 255 255 255;
   --star: #5b2cff;
+  color-scheme: light;
+}
+
+/* cyberpunk skin: dark = neon yellow/cyan/magenta on near-black, light = daylight Night City */
+[data-skin="cyber"][data-theme="dark"],
+[data-skin="cyber"] [data-theme="dark"] {
+  --font-display: "Chakra Petch", system-ui, sans-serif;
+  --font-mono: "Share Tech Mono", ui-monospace, monospace;
+  --bg: 5 6 13;
+  --surface: 11 13 26;
+  --fg: 225 247 255;
+  --muted: 128 150 176;
+  --line: 0 240 255;
+  --accent: 252 238 10;
+  --accent-ink: 5 6 13;
+  --accent2: 0 240 255;
+  --accent3: 255 42 109;
+  --star: #00f0ff;
+  --scan-a: 0.28;
+  --vig-a: 0.55;
+  color-scheme: dark;
+}
+
+[data-skin="cyber"][data-theme="light"] {
+  --font-display: "Chakra Petch", system-ui, sans-serif;
+  --font-mono: "Share Tech Mono", ui-monospace, monospace;
+  --bg: 238 240 232;
+  --surface: 250 251 246;
+  --fg: 10 12 26;
+  --muted: 82 92 114;
+  --line: 0 90 130;
+  --accent: 232 0 104;
+  --accent-ink: 255 255 255;
+  --accent2: 0 138 190;
+  --accent3: 196 150 0;
+  --star: #e80068;
+  --scan-a: 0.09;
+  --vig-a: 0.16;
   color-scheme: light;
 }
 
@@ -86,9 +132,8 @@ body::after {
 /* fine pointer devices get the custom cursor, everyone else the normal one */
 @media (hover: hover) and (pointer: fine) {
   body.has-cursor,
-  body.has-cursor a,
-  body.has-cursor button {
-    cursor: none;
+  body.has-cursor * {
+    cursor: none !important;
   }
 }
 
@@ -120,3 +165,300 @@ body::after {
 [data-theme="light"] .icon-mono {
   filter: invert(1);
 }
+
+/* ---------- scrollbars (every theme) ---------- */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--accent)) rgb(var(--bg));
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgb(var(--bg));
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--accent) / 0.85);
+  border: 2px solid rgb(var(--bg));
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--accent));
+}
+[data-skin="cyber"] ::-webkit-scrollbar {
+  width: 12px;
+}
+[data-skin="cyber"] ::-webkit-scrollbar-track {
+  background: repeating-linear-gradient(to bottom, rgb(var(--accent2) / 0.18) 0 1px, transparent 1px 8px), rgb(var(--bg));
+  border-left: 1px solid rgb(var(--accent2) / 0.4);
+}
+[data-skin="cyber"] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, rgb(var(--accent)), rgb(var(--accent3)));
+  border: 2px solid rgb(var(--bg));
+  border-radius: 0;
+}
+
+/* marquee separator changes with the theme */
+.mq-sep::before {
+  content: "✦";
+}
+[data-skin="cyber"] .mq-sep::before {
+  content: "//";
+  font-family: var(--font-mono);
+}
+
+/* ======================= CYBERPUNK ======================= */
+[data-skin="cyber"] ::selection {
+  background: rgb(var(--accent3));
+  color: #fff;
+}
+[data-skin="cyber"] h1,
+[data-skin="cyber"] h2,
+[data-skin="cyber"] h3,
+[data-skin="cyber"] .font-display {
+  text-transform: uppercase;
+  letter-spacing: -0.005em !important;
+}
+[data-skin="cyber"] .hero-title {
+  font-size: clamp(2.8rem, 10.5vw, 9.5rem) !important;
+  line-height: 0.95 !important;
+}
+[data-skin="cyber"] .text-accent {
+  text-shadow: 0 0 16px rgb(var(--accent) / 0.55);
+}
+[data-skin="cyber"] .text-outline {
+  -webkit-text-stroke: 1.5px rgb(var(--accent2) / 0.45);
+}
+[data-skin="cyber"] body::after {
+  opacity: 0.08;
+}
+[data-skin="cyber"] .hero-orb-b {
+  background: rgb(var(--accent3) / 0.22);
+}
+
+/* corners: round -> sharp, big cards and pills get a chamfered cut */
+[data-skin="cyber"] [class*="rounded-lg"],
+[data-skin="cyber"] [class*="rounded-xl"],
+[data-skin="cyber"] [class*="rounded-2xl"],
+[data-skin="cyber"] [class*="rounded-3xl"],
+[data-skin="cyber"] [class*="rounded-[2rem]"],
+[data-skin="cyber"] [class*="rounded-[3rem]"],
+[data-skin="cyber"] button[class*="rounded-full"],
+[data-skin="cyber"] a[class*="rounded-full"],
+[data-skin="cyber"] nav[class*="rounded-full"],
+[data-skin="cyber"] span[class*="rounded-full"][class*="px-"],
+[data-skin="cyber"] div[class*="rounded-full"][class*="px-"] {
+  border-radius: 0 !important;
+}
+[data-skin="cyber"] [class*="rounded-xl"],
+[data-skin="cyber"] [class*="rounded-2xl"],
+[data-skin="cyber"] button[class*="rounded-full"],
+[data-skin="cyber"] a[class*="rounded-full"],
+[data-skin="cyber"] span[class*="rounded-full"][class*="px-"],
+[data-skin="cyber"] div[class*="rounded-full"][class*="px-"] {
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+/* the nav must NOT be clipped (the theme dropdown hangs below it), so it gets border + corner marks instead */
+[data-skin="cyber"] nav[class*="rounded-full"] {
+  border-color: rgb(var(--accent2) / 0.4);
+  border-bottom: 2px solid rgb(var(--accent));
+  position: relative;
+}
+[data-skin="cyber"] nav[class*="rounded-full"]::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: -1px;
+  width: 22px;
+  height: 22px;
+  border-left: 2px solid rgb(var(--accent3));
+  border-top: 2px solid rgb(var(--accent3));
+  pointer-events: none;
+}
+[data-skin="cyber"] [class*="rounded-3xl"],
+[data-skin="cyber"] [class*="rounded-[2rem]"] {
+  clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
+}
+[data-skin="cyber"] [class*="rounded-[3rem]"] {
+  clip-path: polygon(0 0, calc(100% - 40px) 0, 100% 40px, 100% 100%, 40px 100%, 0 calc(100% - 40px));
+}
+
+/* HUD brackets on the big cards */
+[data-skin="cyber"] .project-card,
+[data-skin="cyber"] .exp-card {
+  position: relative;
+}
+[data-skin="cyber"] .project-card::after,
+[data-skin="cyber"] .exp-card::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  pointer-events: none;
+  z-index: 5;
+  background:
+    linear-gradient(rgb(var(--accent)), rgb(var(--accent))) top left / 16px 1px no-repeat,
+    linear-gradient(rgb(var(--accent)), rgb(var(--accent))) top left / 1px 16px no-repeat,
+    linear-gradient(rgb(var(--accent2)), rgb(var(--accent2))) bottom right / 16px 1px no-repeat,
+    linear-gradient(rgb(var(--accent2)), rgb(var(--accent2))) bottom right / 1px 16px no-repeat;
+}
+
+/* inputs: terminal fields */
+[data-skin="cyber"] input,
+[data-skin="cyber"] textarea {
+  font-family: var(--font-mono) !important;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  caret-color: rgb(var(--accent));
+  background: rgb(var(--accent2) / 0.05) !important;
+  border-color: rgb(var(--accent2) / 0.45) !important;
+  border-left: 3px solid rgb(var(--accent)) !important;
+}
+[data-skin="cyber"] input:focus,
+[data-skin="cyber"] textarea:focus {
+  border-color: rgb(var(--accent)) !important;
+}
+[data-skin="cyber"] input::placeholder,
+[data-skin="cyber"] textarea::placeholder {
+  color: rgb(var(--accent2) / 0.7) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* hero grid sun + nebulas recolour */
+[data-skin="cyber"] .space .nebula-a {
+  background: rgb(var(--accent3) / 0.22) !important;
+}
+[data-skin="cyber"] .space .nebula-b {
+  background: rgb(var(--accent2) / 0.18) !important;
+}
+
+/* experience spine + dots */
+[data-skin="cyber"] .spine-fill {
+  box-shadow: 0 0 14px rgb(var(--accent)), 0 0 4px rgb(var(--accent));
+}
+[data-skin="cyber"] .exp-dot {
+  border-radius: 0 !important;
+  transform: rotate(45deg);
+}
+
+/* ---- cyber cursor + hud + fx (mounted only in the cyber theme) ---- */
+.cfx-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 88;
+}
+.cfx-scan {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(to bottom, rgba(0, 0, 0, var(--scan-a, 0.28)) 0 1px, transparent 1px 3px),
+    radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(0, 0, 0, var(--vig-a, 0.55)) 100%);
+  mix-blend-mode: multiply;
+}
+.cfx-roll {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 22vh;
+  background: linear-gradient(to bottom, transparent, rgb(var(--accent2) / 0.06), transparent);
+}
+.cfx-bar {
+  position: absolute;
+  inset-inline: 0;
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+
+/* ---------- view transition: glitch reveal when entering cyberpunk ---------- */
+::view-transition-group(root) {
+  animation-duration: 0s;
+}
+
+/* cyberpunk light: softer glow, ink-black type */
+[data-skin="cyber"][data-theme="light"] .text-accent {
+  text-shadow: 0 0 10px rgb(var(--accent) / 0.25);
+}
+[data-skin="cyber"][data-theme="light"] .hero-orb-a {
+  background: rgb(var(--accent2) / 0.18);
+}
+[data-skin="cyber"][data-theme="light"] .text-outline {
+  -webkit-text-stroke: 1.5px rgb(var(--accent2) / 0.5);
+}
+[data-skin="cyber"][data-theme="light"] .cfx-roll {
+  background: linear-gradient(to bottom, transparent, rgb(var(--accent) / 0.07), transparent);
+}
+[data-skin="cyber"][data-theme="light"] .cfx-bar {
+  mix-blend-mode: multiply;
+}
+
+/* long paragraphs stay mixed case so they remain readable */
+[data-skin="cyber"] .about-text,
+[data-skin="cyber"] .pp-overview,
+[data-skin="cyber"] .feat-desc {
+  text-transform: none;
+}
+
+/* ---------- reduced motion (OS setting or the in-site toggle) ---------- */
+[data-motion="reduced"] *,
+[data-motion="reduced"] *::before,
+[data-motion="reduced"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+[data-motion="reduced"] body::after,
+[data-motion="reduced"] .cfx-roll,
+[data-motion="reduced"] .cfx-bar {
+  display: none;
+}
+/* no pinned horizontal scroller: the project row becomes a normal swipeable, snapping strip on desktop */
+@media (min-width: 1024px) {
+  [data-motion="reduced"] .pin-area {
+    min-height: 0;
+    overflow: visible;
+    padding-block: 2rem 4rem;
+  }
+  [data-motion="reduced"] .project-track {
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 1.5rem;
+  }
+  [data-motion="reduced"] .project-card {
+    scroll-snap-align: center;
+  }
+  [data-motion="reduced"] .progress-bar {
+    display: none;
+  }
+}
+
+/* ---------- print (resume page, Ctrl+P / Save as PDF) ---------- */
+@media print {
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  body::after,
+  .cfx-layer,
+  .fixed,
+  .no-print {
+    display: none !important;
+  }
+  * {
+    color: #000 !important;
+    border-color: #ccc !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  a {
+    text-decoration: none;
+  }
+}
+
+/* diagram boxes follow the theme's corner style */
+:root { --node-r: 14px; }
+[data-skin="cyber"] { --node-r: 0px; }

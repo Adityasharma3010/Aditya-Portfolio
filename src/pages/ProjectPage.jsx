@@ -6,6 +6,10 @@ import { TLink } from "../components/PageTransition";
 import ProjectCover from "../components/ProjectCover";
 import Magnetic from "../components/Magnetic";
 import NotFound from "./NotFound";
+import Diagram from "../components/Diagram";
+import FlowSteps from "../components/FlowSteps";
+import { diagrams } from "../data/diagrams";
+import { useSeo } from "../hooks/useSeo";
 
 const LANG_COLORS = {
   JavaScript: "#f7df1e", TypeScript: "#3178c6", HTML: "#e34c26", CSS: "#a855f7",
@@ -25,6 +29,7 @@ const ProjectPage = () => {
   const p = projects[i];
   const next = projects[(i + 1) % projects.length];
   const root = useRef(null);
+  useSeo(p ? `${p.name} — Aditya Sharma` : "Project not found — Aditya Sharma", p?.summary);
 
   useGSAP(
     () => {
@@ -190,6 +195,24 @@ const ProjectPage = () => {
             )}
           </div>
         </section>
+
+        {/* architecture + flows */}
+        {diagrams[p.slug] && (
+          <section className="pp-arch mt-28 grid gap-8 lg:grid-cols-[1fr_2.2fr] lg:gap-16">
+            <p className="font-mono text-xs uppercase tracking-widest text-muted lg:sticky lg:top-32 lg:self-start"><span className="text-accent">04</span> / How it works</p>
+            <div className="space-y-16">
+              <div>
+                <p className="mb-6 font-mono text-[11px] uppercase tracking-widest text-muted">Architecture</p>
+                <div className="rounded-3xl border hairline bg-surface p-4 sm:p-8">
+                  <Diagram {...diagrams[p.slug].architecture} />
+                </div>
+              </div>
+              {diagrams[p.slug].flows?.map((f) => (
+                <FlowSteps key={f.title} {...f} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* cta + next */}
         <div className="pp-cta mt-32">

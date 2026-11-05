@@ -10,12 +10,14 @@ export default {
         muted: "rgb(var(--muted) / <alpha-value>)",
         line: "rgb(var(--line) / <alpha-value>)",
         accent: "rgb(var(--accent) / <alpha-value>)",
+        accent2: "rgb(var(--accent2) / <alpha-value>)",
+        accent3: "rgb(var(--accent3) / <alpha-value>)",
         "accent-ink": "rgb(var(--accent-ink) / <alpha-value>)",
       },
       fontFamily: {
-        display: ['"Bricolage Grotesque"', "system-ui", "sans-serif"],
-        sans: ['"Bricolage Grotesque"', "system-ui", "sans-serif"],
-        mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
+        display: ["var(--font-display)", "system-ui", "sans-serif"],
+        sans: ["var(--font-display)", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       screens: {
         xs: "450px",

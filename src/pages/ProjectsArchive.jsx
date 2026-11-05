@@ -2,10 +2,12 @@ import { useRef } from "react";
 import { gsap, useGSAP, prefersReducedMotion } from "../lib/gsap";
 import { projects, formatDate } from "../data";
 import { TLink } from "../components/PageTransition";
+import { useSeo } from "../hooks/useSeo";
 import ProjectCover from "../components/ProjectCover";
 
 const ProjectsArchive = () => {
   const root = useRef(null);
+  useSeo("Projects — Aditya Sharma", `All ${projects.length} projects by Aditya Sharma, newest first: React, MERN, Supabase and WordPress builds.`);
   const preview = useRef(null);
 
   useGSAP(

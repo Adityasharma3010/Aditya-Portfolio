@@ -3,6 +3,8 @@ import { gsap, ScrollTrigger, SplitText, useGSAP, prefersReducedMotion } from ".
 import { profile } from "../data";
 import Magnetic from "./Magnetic";
 import { useLenis } from "./SmoothScroll";
+import CyberGrid from "./CyberGrid";
+import { useTheme } from "../context/Theme";
 
 // live local time, a small human touch
 const useClock = () => {
@@ -19,6 +21,7 @@ const Hero = ({ ready }) => {
   const root = useRef(null);
   const lenis = useLenis();
   const time = useClock();
+  const { cyber } = useTheme();
 
   useGSAP(
     () => {
@@ -39,6 +42,10 @@ const Hero = ({ ready }) => {
       // ---- rotating role text ----
       const roles = gsap.utils.toArray(".role");
       gsap.set(roles, { yPercent: 110 });
+      if (reduce) {
+        gsap.set(roles[0], { yPercent: 0 });
+        return () => split.revert();
+      }
       const loop = gsap.timeline({ repeat: -1, delay: 1.2 });
       roles.forEach((r) => {
         loop.to(r, { yPercent: 0, duration: 0.7, ease: "power4.out" })
@@ -101,6 +108,8 @@ const Hero = ({ ready }) => {
 
   return (
     <section ref={root} className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden px-5 pb-10 pt-32 sm:px-10">
+      {cyber && <CyberGrid sun className="absolute inset-x-0 bottom-0 h-[70%] opacity-80" />}
+
       {/* parallax layers */}
       <div className="hero-orb hero-orb-a pointer-events-none absolute -right-[10vw] top-[12vh] h-[45vmax] w-[45vmax] rounded-full bg-accent/25 blur-[90px] will-change-transform" />
       <div className="hero-orb hero-orb-b pointer-events-none absolute -left-[15vw] bottom-[5vh] h-[35vmax] w-[35vmax] rounded-full bg-fg/10 blur-[110px] will-change-transform" />
@@ -129,11 +138,11 @@ const Hero = ({ ready }) => {
           </p>
         </div>
 
-        <div className="hero-title-wrap origin-bottom will-change-transform">
+        <div data-glitch className="hero-title-wrap origin-bottom will-change-transform">
           <h1 className="hero-title font-display text-[clamp(3.2rem,13.5vw,12rem)] font-extrabold leading-[0.88] tracking-[-0.04em]">
             Aditya
             <br />
-            <span className="text-accent">Sharma</span>
+            <span data-neon className="text-accent">Sharma</span>
           </h1>
         </div>
 
@@ -146,19 +155,19 @@ const Hero = ({ ready }) => {
                 <div key={r} className="role absolute font-display text-3xl font-semibold sm:text-4xl">{r}</div>
               ))}
             </div>
-            <p className="mt-4 max-w-md text-balance text-base text-muted sm:text-lg">
+            <p data-decrypt className="mt-4 max-w-md text-balance text-base text-muted sm:text-lg">
               I build fast, animated web experiences with React, GSAP and WordPress.
             </p>
           </div>
 
           <div className="hero-fade flex items-center gap-4">
             <Magnetic>
-              <button onClick={scrollToWork} data-cursor="Go" className="rounded-full bg-accent px-7 py-4 font-mono text-xs font-medium uppercase tracking-widest text-accent-ink">
+              <button onClick={scrollToWork} data-cursor="Go" data-scramble className="rounded-full bg-accent px-7 py-4 font-mono text-xs font-medium uppercase tracking-widest text-accent-ink">
                 See my work ↓
               </button>
             </Magnetic>
             <Magnetic>
-              <a href={`mailto:${profile.email}`} className="inline-block rounded-full border hairline px-7 py-4 font-mono text-xs uppercase tracking-widest transition-colors hover:bg-fg/10">
+              <a href={`mailto:${profile.email}`} data-scramble className="inline-block rounded-full border hairline px-7 py-4 font-mono text-xs uppercase tracking-widest transition-colors hover:bg-fg/10">
                 Say hi
               </a>
             </Magnetic>

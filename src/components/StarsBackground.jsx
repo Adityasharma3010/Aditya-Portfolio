@@ -3,7 +3,7 @@ import * as THREE from "three";
 
 // The one bit of three.js we keep: a slow rotating star field.
 // Plain three (no r3f/drei), pauses off screen, fewer points on phones, DPR capped.
-const StarsBackground = () => {
+const StarsBackground = ({ cyber = false }) => {
   const mount = useRef(null);
 
   useEffect(() => {
@@ -35,7 +35,11 @@ const StarsBackground = () => {
     const c = new THREE.Color();
     for (let i = 0; i < COUNT; i++) {
       const roll = Math.random();
-      c.set(roll < 0.1 ? "#f272c8" : roll < 0.17 ? "#c8ff3d" : "#e9e7ff");
+      c.set(
+        cyber
+          ? roll < 0.12 ? "#00f0ff" : roll < 0.2 ? "#ff2a6d" : roll < 0.25 ? "#fcee0a" : "#dff6ff"
+          : roll < 0.1 ? "#f272c8" : roll < 0.17 ? "#c8ff3d" : "#e9e7ff"
+      );
       col.set([c.r, c.g, c.b], i * 3);
     }
     const geo = new THREE.BufferGeometry();
@@ -92,7 +96,7 @@ const StarsBackground = () => {
       renderer.forceContextLoss();
       renderer.domElement.remove();
     };
-  }, []);
+  }, [cyber]);
 
   return <div ref={mount} className="absolute inset-0" aria-hidden="true" />;
 };

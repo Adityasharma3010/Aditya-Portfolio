@@ -10,26 +10,40 @@
     />
     <meta name="description" content="Aditya Sharma — full stack developer building fast, animated web experiences with React, GSAP and WordPress." />
     <meta name="theme-color" content="#0b0b0d" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Aditya Sharma" />
+    <meta property="og:title" content="Aditya Sharma — Full Stack Developer" />
+    <meta property="og:description" content="Full stack developer building fast, animated web experiences with React, GSAP and WordPress." />
+    <meta property="og:image" content="/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="/og.png" />
     <title>Aditya Sharma — Full Stack Developer</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500&family=Share+Tech+Mono&display=swap"
       rel="stylesheet"
     />
 
-    <!-- set theme before first paint so there is no flash -->
+    <!-- set skin (default / cyber) and mode (dark / light) before first paint so there is no flash -->
     <script>
       (function () {
         try {
-          var saved = localStorage.getItem("theme");
-          var theme =
-            saved ||
-            (window.matchMedia("(prefers-color-scheme: light)").matches
-              ? "light"
-              : "dark");
-          document.documentElement.setAttribute("data-theme", theme);
+          var skin = localStorage.getItem("skin");
+          var mode = localStorage.getItem("mode");
+          var legacy = localStorage.getItem("theme"); // older builds stored one value
+          if (!skin && legacy === "cyber") skin = "cyber";
+          if (!mode && (legacy === "dark" || legacy === "light")) mode = legacy;
+          if (mode !== "dark" && mode !== "light")
+            mode = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+          var root = document.documentElement;
+          root.setAttribute("data-skin", skin === "cyber" ? "cyber" : "default");
+          root.setAttribute("data-theme", mode);
+          var motion = localStorage.getItem("motion");
+          if (motion !== "reduced" && motion !== "full")
+            motion = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "reduced" : "full";
+          root.setAttribute("data-motion", motion);
         } catch (e) {}
       })();
     </script>

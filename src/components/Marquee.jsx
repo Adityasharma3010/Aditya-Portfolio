@@ -9,6 +9,7 @@ const Marquee = ({ items, speed = 40, reverse = false, separator = true, pauseOn
   useGSAP(
     () => {
       if (prefersReducedMotion()) return;
+      const track = root.current.querySelector(".mq-track");
       const tween = reverse
         ? gsap.fromTo(".mq-track", { xPercent: -50 }, { xPercent: 0, duration: speed, ease: "none", repeat: -1 })
         : gsap.to(".mq-track", { xPercent: -50, duration: speed, ease: "none", repeat: -1 });
@@ -21,6 +22,11 @@ const Marquee = ({ items, speed = 40, reverse = false, separator = true, pauseOn
           const boost = 1 + Math.min(Math.abs(self.getVelocity()) / 400, 6);
           gsap.to(tween, { timeScale: self.direction * boost, duration: 0.2, overwrite: true });
           gsap.to(tween, { timeScale: self.direction, duration: 1, delay: 0.2 });
+          if (document.documentElement.getAttribute("data-skin") === "cyber") {
+            const sk = gsap.utils.clamp(-14, 14, -self.getVelocity() / 140);
+            gsap.to(track, { skewX: sk, duration: 0.25, overwrite: "auto" });
+            gsap.to(track, { skewX: 0, duration: 0.8, delay: 0.25, ease: "elastic.out(1, 0.5)" });
+          }
         },
       });
 
@@ -41,7 +47,7 @@ const Marquee = ({ items, speed = 40, reverse = false, separator = true, pauseOn
   const row = items.map((t, i) => (
     <span key={i} className={`flex shrink-0 items-center gap-8 pr-8 ${itemClass}`}>
       <span>{t}</span>
-      {separator && <span className="text-accent">✦</span>}
+      {separator && <span className="mq-sep text-accent" />}
     </span>
   ));
 

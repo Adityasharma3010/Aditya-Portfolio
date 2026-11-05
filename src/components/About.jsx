@@ -3,9 +3,12 @@ import { gsap, SplitText, useGSAP, prefersReducedMotion } from "../lib/gsap";
 import { about, stats } from "../data";
 import SectionHead from "./SectionHead";
 import Parallax from "./Parallax";
+import DataRain from "./DataRain";
+import { useTheme } from "../context/Theme";
 
 const About = () => {
   const root = useRef(null);
+  const { cyber } = useTheme();
 
   useGSAP(
     () => {
@@ -47,7 +50,8 @@ const About = () => {
   );
 
   return (
-    <section id="about" ref={root} className="relative px-5 py-28 sm:px-10 sm:py-44">
+    <section id="about" ref={root} className="relative overflow-hidden px-5 py-28 sm:px-10 sm:py-44">
+      {cyber && <DataRain className="inset-y-0 right-0 hidden w-[26%] opacity-80 lg:block" />}
       <Parallax speed={0.5} className="pointer-events-none absolute right-[4vw] top-10 select-none font-display text-[22vw] font-extrabold leading-none text-outline opacity-40" aria-hidden="true">
         01
       </Parallax>

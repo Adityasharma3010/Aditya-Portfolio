@@ -1,10 +1,14 @@
 import { useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
 import { gsap, ScrollTrigger, useGSAP } from "../lib/gsap";
 import { navLinks, profile } from "../data";
-import { TLink, usePageNav } from "./PageTransition";
+import { TLink } from "./PageTransition";
+import { useJump } from "../hooks/useJump";
+import { useTheme } from "../context/Theme";
+import SoundToggle from "./SoundToggle";
 import { useLenis } from "./SmoothScroll";
 import ThemeToggle from "./ThemeToggle";
+import ThemeMenu from "./ThemeMenu";
+import MotionToggle from "./MotionToggle";
 
 const Navbar = ({ ready }) => {
   const root = useRef(null);
@@ -12,8 +16,7 @@ const Navbar = ({ ready }) => {
   const tl = useRef(null);
   const [open, setOpen] = useState(false);
   const lenis = useLenis();
-  const { go } = usePageNav();
-  const { pathname } = useLocation();
+  const { cyber } = useTheme();
 
   // slide in after the loader, hide on scroll down, show on scroll up
   useGSAP(
@@ -54,20 +57,17 @@ const Navbar = ({ ready }) => {
     else { lenis?.start(); tl.current.timeScale(1.4).reverse(); }
   };
 
+  const jumpTo = useJump();
   const jump = (id) => {
-    const run = () => {
-      const el = document.getElementById(id);
-      if (el) lenis ? lenis.scrollTo(el, { offset: -20, duration: 1.4 }) : el.scrollIntoView();
-    };
     if (open) toggleMenu(false);
-    if (pathname !== "/") { go("/"); setTimeout(run, 1400); } else run();
+    jumpTo(id);
   };
 
   return (
     <>
-      <header ref={root} className="fixed inset-x-0 top-0 z-50 px-5 py-4 sm:px-10">
+      <header ref={root} className="no-print fixed inset-x-0 top-0 z-50 px-5 py-4 sm:px-10">
         <nav className="mx-auto flex max-w-[1500px] items-center justify-between rounded-full border hairline bg-bg/60 px-5 py-2 backdrop-blur-xl">
-          <TLink to="/" className="font-display text-xl font-bold tracking-tight" data-cursor="Home">
+          <TLink to="/" data-glitch className="font-display text-xl font-bold tracking-tight" data-cursor="Home">
             AS<span className="text-accent">.</span>
           </TLink>
 
@@ -76,7 +76,7 @@ const Navbar = ({ ready }) => {
               <li key={l.id}>
                 <button onClick={() => jump(l.id)} className="group relative overflow-hidden font-mono text-xs uppercase tracking-widest text-muted transition-colors hover:text-fg">
                   <span className="mr-1 text-accent">0{i + 1}</span>
-                  {l.title}
+                  <span data-scramble>{l.title}</span>
                   <span className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-accent transition-transform duration-500 group-hover:scale-x-100" />
                 </button>
               </li>
@@ -84,7 +84,18 @@ const Navbar = ({ ready }) => {
           </ul>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => window.dispatchEvent(new Event("open-palette"))}
+              aria-label="Open command palette"
+              data-cursor="Search"
+              className="hidden h-10 items-center gap-2 rounded-full border hairline px-3.5 font-mono text-[11px] uppercase tracking-widest text-muted transition-colors hover:bg-fg/10 hover:text-fg lg:flex"
+            >
+              Search <kbd className="rounded border hairline px-1.5 py-px text-[10px]">{/Mac|iPhone|iPad/.test(navigator.platform) ? "⌘K" : "Ctrl K"}</kbd>
+            </button>
+            <ThemeMenu />
             <ThemeToggle />
+            <MotionToggle />
+            {cyber && <SoundToggle />}
             <button
               onClick={() => toggleMenu(!open)}
               className="grid h-10 w-10 place-items-center rounded-full border hairline md:hidden"
