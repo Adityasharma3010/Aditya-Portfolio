@@ -158,7 +158,10 @@ body::after {
 /* fallback for browsers without View Transitions */
 .theme-fade,
 .theme-fade * {
-  transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease !important;
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease,
+    border-color 0.5s ease !important;
 }
 
 /* white logos need flipping on the light theme */
@@ -190,11 +193,21 @@ html {
   width: 12px;
 }
 [data-skin="cyber"] ::-webkit-scrollbar-track {
-  background: repeating-linear-gradient(to bottom, rgb(var(--accent2) / 0.18) 0 1px, transparent 1px 8px), rgb(var(--bg));
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgb(var(--accent2) / 0.18) 0 1px,
+      transparent 1px 8px
+    ),
+    rgb(var(--bg));
   border-left: 1px solid rgb(var(--accent2) / 0.4);
 }
 [data-skin="cyber"] ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, rgb(var(--accent)), rgb(var(--accent3)));
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--accent)),
+    rgb(var(--accent3))
+  );
   border: 2px solid rgb(var(--bg));
   border-radius: 0;
 }
@@ -257,7 +270,14 @@ html {
 [data-skin="cyber"] a[class*="rounded-full"],
 [data-skin="cyber"] span[class*="rounded-full"][class*="px-"],
 [data-skin="cyber"] div[class*="rounded-full"][class*="px-"] {
-  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  clip-path: polygon(
+    0 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% 100%,
+    10px 100%,
+    0 calc(100% - 10px)
+  );
 }
 /* the nav must NOT be clipped (the theme dropdown hangs below it), so it gets border + corner marks instead */
 [data-skin="cyber"] nav[class*="rounded-full"] {
@@ -278,10 +298,24 @@ html {
 }
 [data-skin="cyber"] [class*="rounded-3xl"],
 [data-skin="cyber"] [class*="rounded-[2rem]"] {
-  clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
+  clip-path: polygon(
+    0 0,
+    calc(100% - 24px) 0,
+    100% 24px,
+    100% 100%,
+    24px 100%,
+    0 calc(100% - 24px)
+  );
 }
 [data-skin="cyber"] [class*="rounded-[3rem]"] {
-  clip-path: polygon(0 0, calc(100% - 40px) 0, 100% 40px, 100% 100%, 40px 100%, 0 calc(100% - 40px));
+  clip-path: polygon(
+    0 0,
+    calc(100% - 40px) 0,
+    100% 40px,
+    100% 100%,
+    40px 100%,
+    0 calc(100% - 40px)
+  );
 }
 
 /* HUD brackets on the big cards */
@@ -297,10 +331,14 @@ html {
   pointer-events: none;
   z-index: 5;
   background:
-    linear-gradient(rgb(var(--accent)), rgb(var(--accent))) top left / 16px 1px no-repeat,
-    linear-gradient(rgb(var(--accent)), rgb(var(--accent))) top left / 1px 16px no-repeat,
-    linear-gradient(rgb(var(--accent2)), rgb(var(--accent2))) bottom right / 16px 1px no-repeat,
-    linear-gradient(rgb(var(--accent2)), rgb(var(--accent2))) bottom right / 1px 16px no-repeat;
+    linear-gradient(rgb(var(--accent)), rgb(var(--accent))) top left / 16px 1px
+      no-repeat,
+    linear-gradient(rgb(var(--accent)), rgb(var(--accent))) top left / 1px 16px
+      no-repeat,
+    linear-gradient(rgb(var(--accent2)), rgb(var(--accent2))) bottom right /
+      16px 1px no-repeat,
+    linear-gradient(rgb(var(--accent2)), rgb(var(--accent2))) bottom right / 1px
+      16px no-repeat;
 }
 
 /* inputs: terminal fields */
@@ -335,7 +373,9 @@ html {
 
 /* experience spine + dots */
 [data-skin="cyber"] .spine-fill {
-  box-shadow: 0 0 14px rgb(var(--accent)), 0 0 4px rgb(var(--accent));
+  box-shadow:
+    0 0 14px rgb(var(--accent)),
+    0 0 4px rgb(var(--accent));
 }
 [data-skin="cyber"] .exp-dot {
   border-radius: 0 !important;
@@ -353,8 +393,16 @@ html {
   position: absolute;
   inset: 0;
   background:
-    repeating-linear-gradient(to bottom, rgba(0, 0, 0, var(--scan-a, 0.28)) 0 1px, transparent 1px 3px),
-    radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(0, 0, 0, var(--vig-a, 0.55)) 100%);
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, var(--scan-a, 0.28)) 0 1px,
+      transparent 1px 3px
+    ),
+    radial-gradient(
+      120% 90% at 50% 50%,
+      transparent 55%,
+      rgba(0, 0, 0, var(--vig-a, 0.55)) 100%
+    );
   mix-blend-mode: multiply;
 }
 .cfx-roll {
@@ -362,7 +410,12 @@ html {
   inset-inline: 0;
   top: 0;
   height: 22vh;
-  background: linear-gradient(to bottom, transparent, rgb(var(--accent2) / 0.06), transparent);
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgb(var(--accent2) / 0.06),
+    transparent
+  );
 }
 .cfx-bar {
   position: absolute;
@@ -387,7 +440,12 @@ html {
   -webkit-text-stroke: 1.5px rgb(var(--accent2) / 0.5);
 }
 [data-skin="cyber"][data-theme="light"] .cfx-roll {
-  background: linear-gradient(to bottom, transparent, rgb(var(--accent) / 0.07), transparent);
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgb(var(--accent) / 0.07),
+    transparent
+  );
 }
 [data-skin="cyber"][data-theme="light"] .cfx-bar {
   mix-blend-mode: multiply;
@@ -406,7 +464,10 @@ html {
 [data-motion="reduced"] *::after {
   animation-duration: 0.01ms !important;
   animation-iteration-count: 1 !important;
-  transition-duration: 0.01ms !important;
+  /* exactly 0s: a non-zero duration (even 0.01ms) keeps a CSS transition in flight on every GSAP write,
+     and GSAP then reads the in-flight start value as the end value of its from() tweens (stuck at opacity 0) */
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
   scroll-behavior: auto !important;
 }
 [data-motion="reduced"] body::after,
@@ -460,5 +521,9 @@ html {
 }
 
 /* diagram boxes follow the theme's corner style */
-:root { --node-r: 14px; }
-[data-skin="cyber"] { --node-r: 0px; }
+:root {
+  --node-r: 14px;
+}
+[data-skin="cyber"] {
+  --node-r: 0px;
+}
