@@ -29,8 +29,8 @@ const route = (a, b) => {
   return { d, mid: { x: (s.x + e.x) / 2, y: (s.y + e.y) / 2 } };
 };
 
-// Architecture diagram: boxes pop in, connectors draw themselves, then small data packets
-// keep travelling along every connector (GSAP DrawSVG + MotionPath).
+// Architecture diagram: boxes pop in and connectors draw themselves as you scroll through it (GSAP DrawSVG, scrubbed),
+// then small data packets keep travelling along every connector (MotionPath).
 const Diagram = ({ nodes, edges, h = 420 }) => {
   const root = useRef(null);
   const uid = useId().replace(/:/g, "");
@@ -47,16 +47,30 @@ const Diagram = ({ nodes, edges, h = 420 }) => {
         return;
       }
       gsap.set(packets, { opacity: 0 });
-      const tl = gsap.timeline({ scrollTrigger: { trigger: root.current, start: "top 78%" } });
+
+      // packets travel along every connector, but only once the diagram is fully drawn
+      const flows = packets.map((p, i) => gsap.to(p, { motionPath: { path: paths[i], align: paths[i], alignOrigin: [0.5, 0.5] }, duration: gsap.utils.random(2.2, 3.4), ease: "none", repeat: -1, repeatDelay: gsap.utils.random(0.2, 1), delay: i * 0.35, paused: true }));
+      let flowing = false;
+
+      // scroll-driven: boxes and connectors are drawn as you scroll through the diagram
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: root.current,
+          start: "clamp(top 85%)",
+          end: "clamp(bottom 55%)",
+          scrub: 0.6,
+          onUpdate: (self) => {
+            const done = self.progress > 0.97;
+            if (done === flowing) return;
+            flowing = done;
+            flows.forEach((f) => (done ? f.play() : f.pause()));
+            gsap.to(packets, { opacity: done ? 1 : 0, duration: 0.3, overwrite: "auto" });
+          },
+        },
+      });
       tl.from(".dg-node", { scale: 0.7, opacity: 0, duration: 0.6, ease: "back.out(1.7)", stagger: 0.1 })
         .from(paths, { drawSVG: "0%", duration: 0.9, ease: "power2.inOut", stagger: 0.12 }, "-=0.3")
-        .from(".dg-label", { opacity: 0, y: 6, duration: 0.5, stagger: 0.08 }, "-=0.6")
-        .add(() => {
-          packets.forEach((p, i) => {
-            gsap.set(p, { opacity: 1 });
-            gsap.to(p, { motionPath: { path: paths[i], align: paths[i], alignOrigin: [0.5, 0.5] }, duration: gsap.utils.random(2.2, 3.4), ease: "none", repeat: -1, repeatDelay: gsap.utils.random(0.2, 1), delay: i * 0.35 });
-          });
-        });
+        .from(".dg-label", { opacity: 0, y: 6, duration: 0.5, stagger: 0.08 }, "-=0.6");
     },
     { scope: root }
   );

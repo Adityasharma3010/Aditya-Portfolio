@@ -121,8 +121,12 @@ const Contact = () => {
      {/* always dark: it is a night sky, whatever the site theme is */}
      <div data-theme="dark" className="space relative isolate overflow-hidden rounded-[2rem] bg-bg px-5 pb-10 pt-28 text-fg sm:rounded-[3rem] sm:px-10 sm:pt-44">
       {/* nebula glows */}
-      <div className="nebula nebula-a pointer-events-none absolute -left-[20%] top-[10%] -z-[1] h-[70vmax] w-[70vmax] rounded-full bg-[#7a2cff]/25 blur-[120px]" />
-      <div className="nebula nebula-b pointer-events-none absolute -right-[25%] bottom-[-10%] -z-[1] h-[60vmax] w-[60vmax] rounded-full bg-[#f272c8]/20 blur-[130px]" />
+      <div className="nebula nebula-a pointer-events-none absolute -left-[20%] top-[10%] -z-[1] h-[70vmax] w-[70vmax] will-change-transform">
+        <div className="orb-glow absolute inset-0 rounded-full bg-[#7a2cff]/25 blur-[120px]" />
+      </div>
+      <div className="nebula nebula-b pointer-events-none absolute -right-[25%] bottom-[-10%] -z-[1] h-[60vmax] w-[60vmax] will-change-transform">
+        <div className="orb-glow absolute inset-0 rounded-full bg-[#f272c8]/20 blur-[130px]" />
+      </div>
 
       <div className="stars-layer absolute -inset-[6%] -z-[1]">
         {showStars && (

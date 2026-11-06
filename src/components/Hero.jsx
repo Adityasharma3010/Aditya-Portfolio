@@ -111,8 +111,13 @@ const Hero = ({ ready }) => {
       {cyber && <CyberGrid sun className="absolute inset-x-0 bottom-0 h-[70%] opacity-80" />}
 
       {/* parallax layers */}
-      <div className="hero-orb hero-orb-a pointer-events-none absolute -right-[10vw] top-[12vh] h-[45vmax] w-[45vmax] rounded-full bg-accent/25 blur-[90px] will-change-transform" />
-      <div className="hero-orb hero-orb-b pointer-events-none absolute -left-[15vw] bottom-[5vh] h-[35vmax] w-[35vmax] rounded-full bg-fg/10 blur-[110px] will-change-transform" />
+      {/* the blur sits on a static child: it is rasterised once and the animated parent just moves that texture */}
+      <div className="hero-orb hero-orb-a pointer-events-none absolute -right-[10vw] top-[12vh] h-[45vmax] w-[45vmax] will-change-transform">
+        <div className="orb-glow absolute inset-0 rounded-full bg-accent/25 blur-[90px]" />
+      </div>
+      <div className="hero-orb hero-orb-b pointer-events-none absolute -left-[15vw] bottom-[5vh] h-[35vmax] w-[35vmax] will-change-transform">
+        <div className="orb-glow absolute inset-0 rounded-full bg-fg/10 blur-[110px]" />
+      </div>
       <div className="hero-bgword pointer-events-none absolute left-0 top-[18vh] select-none whitespace-nowrap font-display text-[32vw] font-extrabold leading-none text-outline opacity-60 will-change-transform" aria-hidden="true">
         DEVELOPER
       </div>

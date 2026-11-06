@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { ScrollTrigger } from "./lib/gsap";
 import { ThemeProvider, useTheme } from "./context/Theme";
@@ -7,18 +7,21 @@ import SmoothScroll from "./components/SmoothScroll";
 import { TransitionProvider } from "./components/PageTransition";
 import Loader from "./components/Loader";
 import Cursor from "./components/Cursor";
-import CyberCursor from "./components/CyberCursor";
-import CyberFX from "./components/CyberFX";
-import CyberHud from "./components/CyberHud";
+import DefaultFX from "./components/DefaultFX";
 import Navbar from "./components/Navbar";
-import CommandPalette from "./components/CommandPalette";
+import PaletteGate from "./components/PaletteGate";
 import Konami from "./components/Konami";
 import Home from "./pages/Home";
-import Resume from "./pages/Resume";
-import Uses from "./pages/Uses";
-import ProjectsArchive from "./pages/ProjectsArchive";
-import ProjectPage from "./pages/ProjectPage";
-import NotFound from "./pages/NotFound";
+
+// everything except the home page and the default skin is loaded on demand
+const Resume = lazy(() => import("./pages/Resume"));
+const Uses = lazy(() => import("./pages/Uses"));
+const ProjectsArchive = lazy(() => import("./pages/ProjectsArchive"));
+const ProjectPage = lazy(() => import("./pages/ProjectPage"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const CyberCursor = lazy(() => import("./components/CyberCursor"));
+const CyberFX = lazy(() => import("./components/CyberFX"));
+const CyberHud = lazy(() => import("./components/CyberHud"));
 
 const Shell = () => {
   // intro only once per browser session
@@ -37,6 +40,18 @@ const Shell = () => {
     return () => clearTimeout(t);
   }, [pathname, epoch]);
 
+  // once the page is up, fetch the pages people most likely open next while the browser is idle
+  useEffect(() => {
+    if (!ready) return;
+    const idle = window.requestIdleCallback || ((f) => setTimeout(f, 1500));
+    const cancel = window.cancelIdleCallback || clearTimeout;
+    const id = idle(() => {
+      import("./pages/ProjectPage");
+      import("./pages/ProjectsArchive");
+    });
+    return () => cancel(id);
+  }, [ready]);
+
   const done = () => {
     sessionStorage.setItem("intro", "1");
     setReady(true);
@@ -47,8 +62,9 @@ const Shell = () => {
       {!ready && <Loader onDone={done} />}
       {/* remounted whenever the motion setting changes so every animation re-reads it */}
       <div key={epoch} style={{ display: "contents" }}>
-        {cyber ? <CyberCursor /> : <Cursor />}
+        {cyber ? <Suspense fallback={null}><CyberCursor /></Suspense> : <Cursor />}
         <Navbar ready={ready} />
+        <Suspense fallback={null}>
         <Routes>
           <Route path="/" element={<Home ready={ready} />} />
           <Route path="/projects" element={<ProjectsArchive />} />
@@ -57,13 +73,15 @@ const Shell = () => {
           <Route path="/uses" element={<Uses />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </Suspense>
+        {!cyber && <DefaultFX ready={ready} />}
         {cyber && (
-          <>
+          <Suspense fallback={null}>
             <CyberFX ready={ready} />
             <CyberHud ready={ready} />
-          </>
+          </Suspense>
         )}
-        <CommandPalette />
+        <PaletteGate />
         <Konami />
       </div>
     </>

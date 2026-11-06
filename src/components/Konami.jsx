@@ -1,56 +1,82 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "../context/Theme";
 import { overdrive } from "../lib/overdrive";
-import { CHEATS, CHEAT_MAX_LEN } from "../lib/cheats";
+import { useJump } from "../hooks/useJump";
 
-const CODE = [
-  "ArrowUp",
-  "ArrowUp",
-  "ArrowDown",
-  "ArrowDown",
-  "ArrowLeft",
-  "ArrowRight",
-  "ArrowLeft",
-  "ArrowRight",
-  "b",
-  "a",
-];
+// GTA style cheats: type the word, or press the arrow combo (U D L R). The effects live in lib/cheats.js,
+// which is loaded when the browser is idle so it never competes with the first paint.
+// Cyberpunk / override:  ↑ ↑ ↓ ↓ ← → ← →  or type "cyberpunk" / "override".
+// In the default skin it unlocks Cyberpunk. In Cyberpunk it triggers overdrive.
+const ARROW_KEYS = { ArrowUp: "U", ArrowDown: "D", ArrowLeft: "L", ArrowRight: "R" };
+const CYBER_ARROWS = "UUDDLRLR";
 
-// ↑ ↑ ↓ ↓ ← → ← → B A
-// In the default theme it unlocks Cyberpunk. In Cyberpunk it triggers overdrive.
-// Typed words (iddqd, idkfa, hadouken, party, disco, snake) trigger the cheats in lib/cheats.js, in both skins.
 const Konami = () => {
   const { cyber, switchSkin } = useTheme();
+  const jump = useJump();
+  const [mod, setMod] = useState(null);
 
   useEffect(() => {
-    let i = 0;
-    let typed = "";
-    const onKey = (e) => {
-      if (e.target.matches?.("input, textarea, select, [contenteditable]"))
-        return;
-      if (e.ctrlKey || e.metaKey || e.altKey) return;
-      const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    let dead = false;
+    const idle = window.requestIdleCallback || ((f) => setTimeout(f, 1500));
+    const cancel = window.cancelIdleCallback || clearTimeout;
+    const id = idle(() => { import("../lib/cheats").then((m) => { if (!dead) setMod(m); }); }, { timeout: 4000 });
+    return () => { dead = true; cancel(id); };
+  }, []);
 
-      // typed cheat words
-      if (e.key.length === 1) {
-        typed = (typed + k).slice(-CHEAT_MAX_LEN);
-        const word = Object.keys(CHEATS).find((w) => typed.endsWith(w));
-        if (word) {
-          typed = "";
-          CHEATS[word]();
+  // lets cheats like hireme use the router / smooth scroller
+  useEffect(() => {
+    if (!mod) return;
+    mod.hooks.jump = jump;
+    return () => { mod.hooks.jump = null; };
+  }, [mod, jump]);
+
+  useEffect(() => {
+    if (!mod) return;
+    const { CHEATS, CHEAT_ARROWS } = mod;
+    const cyberCheat = () => (cyber ? overdrive() : switchSkin("cyber"));
+    const words = { ...CHEATS, cyberpunk: cyberCheat, override: cyberCheat };
+    const combos = { [CYBER_ARROWS]: cyberCheat };
+    Object.entries(CHEAT_ARROWS).forEach(([name, combo]) => { combos[combo] = CHEATS[name]; });
+
+    const wordList = Object.keys(words);
+    const comboList = Object.keys(combos);
+    const maxWord = Math.max(...wordList.map((w) => w.length));
+    const maxCombo = Math.max(...comboList.map((c) => c.length));
+
+    let typed = "";
+    let arrows = "";
+    const onKey = (e) => {
+      if (e.repeat) return;
+      if (e.target.matches?.("input, textarea, select, [contenteditable]")) return;
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+      // arrow combos
+      const arrow = ARROW_KEYS[e.key];
+      if (arrow) {
+        typed = "";
+        arrows = (arrows + arrow).slice(-maxCombo);
+        const hit = comboList.find((c) => arrows.endsWith(c));
+        if (hit) {
+          arrows = "";
+          combos[hit]();
         }
+        return;
       }
 
-      i = k === CODE[i] ? i + 1 : k === CODE[0] ? 1 : 0;
-      if (i === CODE.length) {
-        i = 0;
-        if (cyber) overdrive();
-        else switchSkin("cyber");
+      // typed words
+      if (e.key.length === 1) {
+        arrows = "";
+        typed = (typed + e.key.toLowerCase()).slice(-maxWord);
+        const hit = wordList.find((w) => typed.endsWith(w));
+        if (hit) {
+          typed = "";
+          words[hit]();
+        }
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [cyber, switchSkin]);
+  }, [mod, cyber, switchSkin]);
 
   return null;
 };

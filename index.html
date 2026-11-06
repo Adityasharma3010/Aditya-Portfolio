@@ -21,10 +21,19 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- the fonts stylesheet is fetched without blocking first paint (display=swap shows fallback text until the font arrives) -->
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500&family=Share+Tech+Mono&display=swap"
-      rel="stylesheet"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;500&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
 
     <!-- set skin (default / cyber) and mode (dark / light) before first paint so there is no flash -->
     <script>

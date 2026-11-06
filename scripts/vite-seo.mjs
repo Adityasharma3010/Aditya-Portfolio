@@ -43,12 +43,13 @@ export default function seo() {
         { path: "/projects", title: "Projects — Aditya Sharma", desc: `All ${projects.length} projects by Aditya Sharma, newest first: React, MERN, Supabase and WordPress builds.` },
         { path: "/resume", title: "Resume — Aditya Sharma", desc: "Resume of Aditya Sharma, full stack developer: experience, skills and selected projects." },
         { path: "/uses", title: "Uses — Aditya Sharma", desc: "The languages, frameworks, services and tools Aditya Sharma builds with." },
-        ...projects.map((p) => ({ path: `/projects/${p.slug}`, title: `${p.name} — Aditya Sharma`, desc: p.summary })),
+        ...projects.map((p) => ({ path: `/projects/${p.slug}`, title: `${p.name} — Aditya Sharma`, desc: p.summary, image: `/og/${p.slug}.png` })),
       ];
 
       const page = (p) => {
         const url = site + (p.path === "/" ? "" : p.path);
-        const image = `${site}/og.png`;
+        // per-project card (node scripts/og.mjs) when it exists, otherwise the shared one
+        const image = `${site}${p.image && fs.existsSync(path.join(outDir, p.image)) ? p.image : "/og.png"}`;
         const ld = {
           "@context": "https://schema.org",
           "@type": p.path === "/" ? "Person" : "WebPage",

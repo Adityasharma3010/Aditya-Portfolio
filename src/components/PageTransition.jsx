@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { gsap, prefersReducedMotion } from "../lib/gsap";
 import { useLenis } from "./SmoothScroll";
+import { setFlip } from "../lib/flip";
 
 const TransitionContext = createContext(null);
 // eslint-disable-next-line react-refresh/only-export-components
@@ -17,7 +18,7 @@ export const TransitionProvider = ({ children }) => {
   const busy = useRef(false);
 
   const go = useCallback(
-    (to) => {
+    (to, opts) => {
       if (busy.current || to === location.pathname) return;
       if (prefersReducedMotion()) {
         navigate(to);
@@ -40,6 +41,26 @@ export const TransitionProvider = ({ children }) => {
           .set(strips, { transformOrigin: "right" })
           .to(strips, { scaleX: 0, duration: 0.45, ease: "power4.out", stagger: { each: 0.035, from: "random" }, delay: 0.12 })
           .set(strip.current, { display: "none" });
+        return;
+      }
+      // project card: its image frame expands to fill the screen, the case-study page then shrinks it into its cover
+      if (opts?.flip?.isConnected) {
+        const src = opts.flip;
+        const r = src.getBoundingClientRect();
+        const clone = src.cloneNode(true);
+        [...clone.children].filter((c) => c.tagName === "SPAN").forEach((c) => c.remove()); // status chip + arrow badge
+        clone.removeAttribute("data-flip-src");
+        clone.className = "";
+        Object.assign(clone.style, { position: "fixed", top: `${r.top}px`, left: `${r.left}px`, width: `${r.width}px`, height: `${r.height}px`, margin: "0", zIndex: "79", overflow: "hidden", borderRadius: "2rem 2rem 0 0", pointerEvents: "none" });
+        document.body.appendChild(clone);
+        tl.to(clone, { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight, borderRadius: 0, duration: 0.75, ease: "power4.inOut" })
+          .add(() => {
+            setFlip(clone);
+            navigate(to);
+            lenis ? lenis.scrollTo(0, { immediate: true }) : window.scrollTo(0, 0);
+          });
+        // safety net: if nothing picked the clone up, fade it out
+        setTimeout(() => { if (clone.isConnected) gsap.to(clone, { opacity: 0, duration: 0.4, onComplete: () => clone.remove() }); }, 4500);
         return;
       }
       tl.set(curtain.current, { yPercent: 100, display: "block" })
@@ -79,7 +100,8 @@ export const TLink = ({ to, children, ...rest }) => {
       onClick={(e) => {
         if (e.metaKey || e.ctrlKey || e.shiftKey) return;
         e.preventDefault();
-        go(to);
+        const frame = e.currentTarget.querySelector("[data-flip-src]");
+        go(to, frame ? { flip: frame } : undefined);
       }}
       {...rest}
     >
