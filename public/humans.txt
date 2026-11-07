@@ -1,0 +1,10 @@
+/* TEAM */
+Developer: Aditya Sharma
+Site: https://adityasharma.site
+Location: India
+
+/* SITE */
+Built with: React, Vite, GSAP, Tailwind, Lenis
+Fun fact: this site has another side. It only opens from the keyboard.
+The second half is: left, right, left, right.
+The first half is further down the page.

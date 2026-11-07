@@ -68,7 +68,7 @@ const Navbar = ({ ready }) => {
     <>
       <header ref={root} className="no-print fixed inset-x-0 top-0 z-50 px-5 py-4 sm:px-10">
         <nav className="mx-auto flex max-w-[1500px] items-center justify-between rounded-full border hairline bg-bg/60 px-5 py-2 backdrop-blur-xl">
-          <TLink to="/" data-glitch className="font-display text-xl font-bold tracking-tight" data-cursor="Home">
+          <TLink to="/" data-glitch data-egg-logo className="font-display text-xl font-bold tracking-tight" data-cursor="Home">
             AS<span className="text-accent">.</span>
           </TLink>
 
@@ -93,7 +93,8 @@ const Navbar = ({ ready }) => {
             >
               Search <kbd className="rounded border hairline px-1.5 py-px text-[10px]">{/Mac|iPhone|iPad/.test(navigator.platform) ? "⌘K" : "Ctrl K"}</kbd>
             </button>
-            <ThemeMenu />
+            {/* only inside Cyberpunk: the way in is a cheat code, so the default skin has no skin switcher */}
+            {cyber && <ThemeMenu />}
             <ThemeToggle />
             <MotionToggle />
             {cyber && <SoundToggle />}

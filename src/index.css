@@ -462,6 +462,9 @@ html {
   }
 }
 
+/* easter egg: hold Shift over a project card */
+.project-card[data-xray] .card-img > * { filter: grayscale(1) invert(1) contrast(1.15); }
+
 /* diagram boxes follow the theme's corner style */
 :root { --node-r: 14px; }
 [data-skin="cyber"] { --node-r: 0px; }

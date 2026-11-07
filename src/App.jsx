@@ -8,8 +8,10 @@ import { TransitionProvider } from "./components/PageTransition";
 import Loader from "./components/Loader";
 import Cursor from "./components/Cursor";
 import DefaultFX from "./components/DefaultFX";
+import Eggs from "./components/Eggs";
 import Navbar from "./components/Navbar";
 import PaletteGate from "./components/PaletteGate";
+import SecretsGate from "./components/SecretsGate";
 import Konami from "./components/Konami";
 import Home from "./pages/Home";
 
@@ -18,6 +20,8 @@ const Resume = lazy(() => import("./pages/Resume"));
 const Uses = lazy(() => import("./pages/Uses"));
 const ProjectsArchive = lazy(() => import("./pages/ProjectsArchive"));
 const ProjectPage = lazy(() => import("./pages/ProjectPage"));
+const Notes = lazy(() => import("./pages/Notes"));
+const NotePage = lazy(() => import("./pages/NotePage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const CyberCursor = lazy(() => import("./components/CyberCursor"));
 const CyberFX = lazy(() => import("./components/CyberFX"));
@@ -71,6 +75,8 @@ const Shell = () => {
           <Route path="/projects/:slug" element={<ProjectPage />} />
           <Route path="/resume" element={<Resume />} />
           <Route path="/uses" element={<Uses />} />
+          <Route path="/notes" element={<Notes />} />
+          <Route path="/notes/:slug" element={<NotePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         </Suspense>
@@ -82,7 +88,9 @@ const Shell = () => {
           </Suspense>
         )}
         <PaletteGate />
+        <SecretsGate />
         <Konami />
+        <Eggs />
       </div>
     </>
   );

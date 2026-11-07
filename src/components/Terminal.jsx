@@ -11,7 +11,7 @@ import { blip, isSoundOn, setSound } from "../lib/sound";
 
 const PROMPT = "visitor@aditya:~$";
 const SECTIONS = ["about", "work", "experience", "activity", "contact"];
-const COMMANDS = ["help", "whoami", "about", "projects", "open", "skills", "contact", "github", "resume", "uses", "goto", "theme", "mode", "motion", "sound", "history", "clear", "override", "date", "exit"];
+const COMMANDS = ["help", "whoami", "about", "projects", "open", "skills", "contact", "github", "resume", "uses", "notes", "goto", "theme", "mode", "motion", "sound", "history", "clear", "override", "date", "exit"];
 
 const HELP = [
   "help                 this list",
@@ -21,7 +21,7 @@ const HELP = [
   "skills               my stack",
   "goto <section>       about | work | experience | activity | contact",
   "contact / github     ways to reach me",
-  "resume / uses        open those pages",
+  "resume / uses / notes  open those pages",
   "theme <default|cyberpunk>   switch theme",
   "mode <dark|light>           switch mode",
   "motion <reduced|full>       motion setting",
@@ -90,6 +90,7 @@ const Terminal = () => {
       case "github": say(`opening ${profile.github} ...`, "text-accent"); return window.open(profile.github, "_blank", "noreferrer");
       case "resume": say("loading resume ...", "text-accent"); return setTimeout(() => go("/resume"), 350);
       case "uses": say("loading uses ...", "text-accent"); return setTimeout(() => go("/uses"), 350);
+      case "notes": say("loading notes ...", "text-accent"); return setTimeout(() => go("/notes"), 350);
       case "goto": case "cd": {
         const id = arg.replace(/^\//, "").toLowerCase();
         if (id === "~" || id === "top" || id === "") { jump("top"); return say("ok"); }
@@ -123,7 +124,7 @@ const Terminal = () => {
       case "clear": printed.current = 0; return setLines([]);
       case "date": return say(new Date().toString());
       case "echo": return say(arg);
-      case "ls": return say(SECTIONS.map((s) => s + "/").concat("resume.pdf", "uses.md"));
+      case "ls": return say(SECTIONS.map((s) => s + "/").concat("resume.pdf", "uses.md", "notes/"));
       case "sudo": blip.error(); return say("nice try, choomba. you are not in the sudoers file. this incident will be reported.", "text-accent3");
       case "rm": blip.error(); return say("access denied. ICE is watching.", "text-accent3");
       case "override": case "matrix": case "konami": say("OVERRIDE ACCEPTED", "text-accent"); return overdrive();

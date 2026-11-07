@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { useTheme } from "../context/Theme";
 import { overdrive } from "../lib/overdrive";
 import { useJump } from "../hooks/useJump";
+import { unlock } from "../lib/achievements";
+import { SECRETS } from "../lib/secrets";
 
 // GTA style cheats: type the word, or press the arrow combo (U D L R). The effects live in lib/cheats.js,
 // which is loaded when the browser is idle so it never competes with the first paint.
 // Cyberpunk / override:  ↑ ↑ ↓ ↓ ← → ← →  or type "cyberpunk" / "override".
 // In the default skin it unlocks Cyberpunk. In Cyberpunk it triggers overdrive.
 const ARROW_KEYS = { ArrowUp: "U", ArrowDown: "D", ArrowLeft: "L", ArrowRight: "R" };
-const CYBER_ARROWS = "UUDDLRLR";
+const CYBER_ARROWS = SECRETS.find((s) => s.id === "cyberpunk").arrows;
 
 const Konami = () => {
   const { cyber, switchSkin } = useTheme();
@@ -33,10 +35,21 @@ const Konami = () => {
   useEffect(() => {
     if (!mod) return;
     const { CHEATS, CHEAT_ARROWS } = mod;
-    const cyberCheat = () => (cyber ? overdrive() : switchSkin("cyber"));
-    const words = { ...CHEATS, cyberpunk: cyberCheat, override: cyberCheat };
+    const cyberCheat = () => {
+      if (cyber) {
+        overdrive();
+        unlock("overdrive");
+      } else {
+        switchSkin("cyber");
+        unlock("cyberpunk");
+      }
+    };
+    // a cheat that is busy (another effect is running) returns false and does not count as found
+    const run = (name) => () => { if (CHEATS[name]() !== false) unlock(name); };
+    const words = { cyberpunk: cyberCheat, override: cyberCheat };
+    Object.keys(CHEATS).forEach((name) => { words[name] = run(name); });
     const combos = { [CYBER_ARROWS]: cyberCheat };
-    Object.entries(CHEAT_ARROWS).forEach(([name, combo]) => { combos[combo] = CHEATS[name]; });
+    Object.entries(CHEAT_ARROWS).forEach(([name, combo]) => { combos[combo] = run(name); });
 
     const wordList = Object.keys(words);
     const comboList = Object.keys(combos);

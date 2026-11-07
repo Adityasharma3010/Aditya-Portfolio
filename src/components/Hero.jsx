@@ -123,7 +123,7 @@ const Hero = ({ ready }) => {
       </div>
 
       {/* rotating badge */}
-      <div className="hero-scroll absolute right-5 top-32 hidden h-36 w-36 sm:block md:right-10 md:top-36 md:h-44 md:w-44">
+      <div title="30 lives" data-egg-badge role="img" aria-label="Rotating badge. Four keys, eight presses." className="hero-scroll absolute right-5 top-32 z-10 hidden h-36 w-36 sm:block md:right-10 md:top-36 md:h-44 md:w-44">
        <div className="hero-fade relative flex h-full w-full items-center justify-center">
         <svg className="hero-badge-ring absolute inset-0 h-full w-full" viewBox="0 0 200 200" aria-hidden="true">
           <defs><path id="badgePath" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0" /></defs>

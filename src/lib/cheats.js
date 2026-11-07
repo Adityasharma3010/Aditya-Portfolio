@@ -2,9 +2,12 @@ import { gsap, prefersReducedMotion } from "./gsap";
 import { blip } from "./sound";
 import { cv } from "./cyber";
 import { stack } from "../data";
+import { SECRETS } from "./secrets";
+import { showToast } from "./toasts";
 
 // GTA style cheat codes. Each one can be typed as a word (anywhere outside an input) or entered with the arrow keys
-// (U D L R). The matching happens in Konami.jsx, which also owns the cyberpunk / override cheat.
+// (U D L R). Names, hints and the arrow combos are kept in secrets.js; found-state in achievements.js.
+// The matching happens in Konami.jsx, which also owns the cyberpunk / override cheat.
 //
 //   word       arrows (8)           what it does
 //   iddqd      U D U D L L R R      god mode: glowing shield edge
@@ -25,6 +28,9 @@ import { stack } from "../data";
 //   pong       L L R R U D U D      playable pong (esc to quit)
 //   sudo       D U D U L R L R      you are not in the sudoers file
 //   hireme     R U U L D D R L      "let's work together" and jumps to the contact section
+//   matrix     U U L L D D R R      falling code
+//   hello      L U D R L U D R      a big, friendly hello
+//   coffee     D R U D D R U D      caffeine level: 100%
 //   cyberpunk / override   U U D D L R L R   switch to Cyberpunk, and overdrive once you are in it
 //
 // All arrow combos have the same length, so none can be the tail end of another.
@@ -33,7 +39,8 @@ import { stack } from "../data";
 
 const rgb = (name, a) => `rgb(var(${name})${a === undefined ? "" : ` / ${a}`})`;
 const rand = gsap.utils.random;
-let busy = false;
+// cheats that are playing right now. Different cheats can overlap (disco and party at once); the same one cannot restart itself.
+const running = new Set();
 
 const layer = (z = 105) => {
   const el = document.createElement("div");
@@ -51,30 +58,20 @@ const bigText = (parent, text, extra = "") => {
   return t;
 };
 
-// small pill at the bottom of the screen
+// small pill at the bottom of the screen (stacks with the others)
 const toast = (title, sub, ms = 2800) => {
-  const wrap = document.createElement("div");
-  wrap.setAttribute("role", "status");
-  wrap.style.cssText = "position:fixed;left:0;right:0;bottom:1.75rem;z-index:106;display:flex;justify-content:center;pointer-events:none;";
   const pill = document.createElement("div");
   pill.style.cssText = `padding:.7rem 1.3rem;border-radius:999px;border:1px solid ${rgb("--accent")};background:${rgb("--surface", 0.92)};color:${rgb("--fg")};font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;white-space:nowrap;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);`;
   pill.innerHTML = `<span style="color:${rgb("--accent")}">${title}</span><span style="opacity:.6"> / ${sub}</span>`;
-  wrap.appendChild(pill);
-  document.body.appendChild(wrap);
-  if (prefersReducedMotion()) {
-    setTimeout(() => wrap.remove(), ms);
-    return;
-  }
-  gsap.fromTo(pill, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" });
-  // plain timeout, not a gsap delay: bullet time slows the global gsap clock
-  setTimeout(() => gsap.to(pill, { y: 20, opacity: 0, duration: 0.35, onComplete: () => wrap.remove() }), ms);
+  showToast(pill, ms);
 };
 
-// shared wrapper: one effect at a time, skipped (toast only) when motion is reduced
+// shared wrapper: skipped (toast only) when motion is reduced. Cheats run side by side; a cheat that is
+// still playing ignores a second request for itself (returns false, so it is not counted twice)
 const effect = (title, sub, play, ms = 2800) => () => {
-  if (busy) return false;
-  busy = true;
-  const finish = () => { busy = false; };
+  if (running.has(sub)) return false;
+  running.add(sub);
+  const finish = () => { running.delete(sub); };
   toast(title, sub, ms);
   if (prefersReducedMotion()) {
     setTimeout(finish, ms);
@@ -226,7 +223,7 @@ const disco = effect("Disco mode", "disco", (finish) => {
 let snakeOn = false;
 let pongOn = false;
 const snake = () => {
-  if (snakeOn || pongOn || busy) return;
+  if (snakeOn || pongOn) return false;
   snakeOn = true;
   blip.on();
   const N = 20;
@@ -330,6 +327,7 @@ const snake = () => {
   }, { passive: true });
 
   start();
+  return true;
 };
 
 
@@ -548,12 +546,14 @@ const hiremeFx = effect("Great choice", "hireme", (finish) => {
     .to(t, { opacity: 0, duration: 0.5 }, 1.3);
 }, 2600);
 const hireme = () => {
-  if (hiremeFx()) setTimeout(() => hooks.jump?.("contact"), prefersReducedMotion() ? 300 : 900);
+  const started = hiremeFx();
+  if (started) setTimeout(() => hooks.jump?.("contact"), prefersReducedMotion() ? 300 : 900);
+  return started;
 };
 
 // ---- pong: you (left) against a slightly dim computer, first to 5 ----
 const pong = () => {
-  if (pongOn || snakeOn || busy) return;
+  if (pongOn || snakeOn) return false;
   pongOn = true;
   blip.on();
   const W = Math.max(260, Math.min(640, window.innerWidth - 32));
@@ -678,26 +678,76 @@ const pong = () => {
   reset();
   last = performance.now();
   raf = requestAnimationFrame(step);
+  return true;
 };
 
-export const CHEATS = { iddqd, idkfa, hadouken, party, disco, snake, hesoyam, bullettime, crt, warp, flashlight, fireworks, storm, snow, glitch, pong, sudo, hireme };
-export const CHEAT_ARROWS = {
-  iddqd: "UDUDLLRR",
-  idkfa: "LRLRDDUU",
-  hadouken: "DRDRLULU",
-  party: "RRUULLDD",
-  disco: "LDRULDRU",
-  snake: "RDLURDLU",
-  hesoyam: "UURRDDLL",
-  bullettime: "DDLLUURR",
-  crt: "ULDRULDR",
-  warp: "UDLRUDLR",
-  flashlight: "RLRLUUDD",
-  fireworks: "ULULDRDR",
-  storm: "DLDLURUR",
-  snow: "DDRRUULL",
-  glitch: "URURDLDL",
-  pong: "LLRRUDUD",
-  sudo: "DUDULRLR",
-  hireme: "RUULDDRL",
-};
+// ---- matrix: falling code ----
+const matrix = effect("Matrix", "matrix", (finish) => {
+  blip.on();
+  const size = 18;
+  const glyphs = "0123456789ABCDEF<>/{}[]=+*#";
+  const drops = Array.from({ length: Math.ceil(window.innerWidth / size) }, () => ({ y: rand(-40, 0), v: rand(0.7, 1.5) }));
+  const body = cv("accent");
+  const head = cv("fg");
+  let last = performance.now();
+  canvasFx(6000, (g, w, h, t) => {
+    const now = performance.now();
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    const env = Math.min(1, t * 8, (1 - t) * 8);
+    g.fillStyle = `rgba(0,0,0,${0.5 * env})`;
+    g.fillRect(0, 0, w, h);
+    g.font = `${size - 2}px monospace`;
+    drops.forEach((d, j) => {
+      d.y += d.v * 14 * dt;
+      if (d.y * size > h + 16 * size) d.y = rand(-20, 0);
+      for (let k = 0; k < 16; k++) {
+        const row = Math.floor(d.y) - k;
+        if (row < 0) continue;
+        g.globalAlpha = Math.max(0, 1 - k / 16) * env;
+        g.fillStyle = k === 0 ? head : body;
+        g.fillText(glyphs[(Math.random() * glyphs.length) | 0], j * size, row * size);
+      }
+    });
+    g.globalAlpha = 1;
+  }, finish);
+}, 6200);
+
+// ---- hello ----
+const hello = effect("Hello", "hello", (finish) => {
+  blip.success();
+  const l = layer();
+  const t = bigText(l, "HELLO.", "font-size:clamp(3rem,16vw,14rem);");
+  const sub = document.createElement("div");
+  sub.textContent = "nice to meet you";
+  sub.style.cssText = `position:absolute;left:50%;top:calc(50% + clamp(2.5rem,9vw,8rem));transform:translateX(-50%);font-family:var(--font-mono);font-size:14px;letter-spacing:.35em;text-transform:uppercase;color:${rgb("--fg", 0.75)};white-space:nowrap;`;
+  l.appendChild(sub);
+  gsap.timeline({ onComplete: () => { l.remove(); finish(); } })
+    .fromTo(t, { scale: 0.5, opacity: 0, rotate: -8 }, { scale: 1, opacity: 1, rotate: 0, duration: 0.7, ease: "elastic.out(1, 0.5)" }, 0)
+    .fromTo(sub, { opacity: 0 }, { opacity: 1, duration: 0.5 }, 0.5)
+    .to(t, { rotate: 3, duration: 0.12, repeat: 5, yoyo: true, ease: "sine.inOut" }, 0.9)
+    .to([t, sub], { opacity: 0, duration: 0.5 }, 2.4);
+}, 3200);
+
+// ---- coffee: caffeine level ----
+const coffee = effect("Coffee", "coffee", (finish) => {
+  blip.click();
+  const l = layer();
+  const box = document.createElement("div");
+  box.style.cssText = `position:absolute;left:50%;top:50%;width:min(86vw,420px);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.3em;color:${rgb("--fg")};`;
+  box.innerHTML = `<div style="display:flex;justify-content:space-between;font-size:13px"><span>caffeine</span><span class="pct" style="color:${rgb("--accent")}">0%</span></div><div style="margin-top:12px;height:10px;border-radius:999px;background:${rgb("--fg", 0.15)};overflow:hidden"><div class="fill" style="height:100%;width:0;background:${rgb("--accent")}"></div></div><div class="sub" style="margin-top:14px;font-size:11px;opacity:0">ship it</div>`;
+  l.appendChild(box);
+  gsap.set(box, { xPercent: -50, yPercent: -50 });
+  const o = { v: 0 };
+  const pct = box.querySelector(".pct");
+  gsap.timeline({ onComplete: () => { l.remove(); finish(); } })
+    .fromTo(box, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.3 }, 0)
+    .to(o, { v: 100, duration: 1.6, ease: "power2.out", onUpdate: () => { pct.textContent = `${Math.round(o.v)}%`; box.querySelector(".fill").style.width = `${o.v}%`; } }, 0.2)
+    .to(box.querySelector(".sub"), { opacity: 1, duration: 0.2 }, 1.7)
+    .to(box, { x: "random(-5,5)", y: "random(-4,4)", duration: 0.05, repeat: 30, repeatRefresh: true, ease: "none" }, 1.7)
+    .to(box, { opacity: 0, duration: 0.4 }, 3.4);
+}, 3800);
+
+export const CHEATS = { iddqd, idkfa, hadouken, party, disco, snake, hesoyam, bullettime, crt, warp, flashlight, fireworks, storm, snow, glitch, pong, sudo, hireme, matrix, hello, coffee };
+// the arrow combos live in secrets.js, next to each secret's name and hint
+export const CHEAT_ARROWS = Object.fromEntries(SECRETS.filter((x) => x.id in CHEATS).map((x) => [x.id, x.arrows]));

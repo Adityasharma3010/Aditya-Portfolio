@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { gsap, prefersReducedMotion } from "../lib/gsap";
 import { profile } from "../data";
 import { projects } from "../data";
+import { notes } from "../data/notes";
 import { skins } from "../data/themes";
 import { useTheme } from "../context/Theme";
 import { useMotion } from "../context/Motion";
@@ -87,8 +88,12 @@ const CommandPalette = () => {
     add("Navigate", "All projects", "archive, newest first", "archive list", () => go("/projects"));
     add("Navigate", "Resume", "print or save as PDF", "cv", () => go("/resume"));
     add("Navigate", "Uses", "my stack and tools", "tools stack setup", () => go("/uses"));
+    add("Navigate", "Notes", "short write-ups", "blog writing articles posts", () => go("/notes"));
+    add("Navigate", "Secrets", "hidden things you have found", "easter eggs achievements cheats hidden progress", () => window.dispatchEvent(new Event("open-secrets")));
     projects.forEach((p) => add("Projects", p.name, `${p.category} · ${p.status}`, `${p.slug} ${p.tags.join(" ")}`, () => go(`/projects/${p.slug}`)));
-    skins.forEach((s) => add("Theme", `Theme: ${s.label}`, skin === s.id ? "current" : s.note, "skin switch style", () => switchSkin(s.id)));
+    notes.forEach((n) => add("Notes", n.title, n.tags.join(" · "), `${n.slug} ${n.tags.join(" ")}`, () => go(`/notes/${n.slug}`)));
+    // skin switching is only offered once you are inside Cyberpunk (the way in is a cheat code)
+    if (cyber) skins.forEach((s) => add("Theme", `Theme: ${s.label}`, skin === s.id ? "current" : s.note, "skin switch style", () => switchSkin(s.id)));
     add("Theme", `Mode: switch to ${mode === "dark" ? "light" : "dark"}`, `${skin} theme`, "dark light toggle", () => toggleMode());
     add("Settings", `Motion: ${reduced ? "Reduced" : "Full"}`, reduced ? "turn full motion on" : "turn reduced motion on", "reduce motion animation accessibility", () => toggleMotion());
     if (cyber) add("Settings", `Sound blips: ${isSoundOn() ? "On" : "Off"}`, "toggle UI sounds", "mute audio sound", () => toggleSound());

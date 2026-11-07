@@ -21,6 +21,18 @@ const readProjects = (root) => {
   return out;
 };
 
+// same idea for the notes in src/data/notes.js (keep slug, title, date, summary in that order)
+const readNotes = (root) => {
+  const file = path.join(root, "src/data/notes.js");
+  if (!fs.existsSync(file)) return [];
+  const src = fs.readFileSync(file, "utf8");
+  const out = [];
+  const re = /slug:\s*"([^"]+)",[\s\S]*?title:\s*"((?:[^"\\]|\\.)*)",[\s\S]*?date:\s*"([^"]+)",[\s\S]*?summary:\s*"((?:[^"\\]|\\.)*)"/g;
+  let m;
+  while ((m = re.exec(src))) out.push({ slug: m[1], title: m[2].replace(/\\"/g, '"'), date: m[3], summary: m[4].replace(/\\"/g, '"') });
+  return out;
+};
+
 export default function seo() {
   let outDir = "dist";
   let root = process.cwd();
@@ -37,12 +49,15 @@ export default function seo() {
       const tpl = fs.readFileSync(tplPath, "utf8");
       const site = siteUrl();
       const projects = readProjects(root);
+      const notes = readNotes(root);
 
       const pages = [
         { path: "/", title: "Aditya Sharma — Full Stack Developer", desc: "Full stack developer building fast, animated web experiences with React, GSAP, Node and WordPress. Projects, experience and contact." },
         { path: "/projects", title: "Projects — Aditya Sharma", desc: `All ${projects.length} projects by Aditya Sharma, newest first: React, MERN, Supabase and WordPress builds.` },
         { path: "/resume", title: "Resume — Aditya Sharma", desc: "Resume of Aditya Sharma, full stack developer: experience, skills and selected projects." },
         { path: "/uses", title: "Uses — Aditya Sharma", desc: "The languages, frameworks, services and tools Aditya Sharma builds with." },
+        ...(notes.length ? [{ path: "/notes", title: "Notes — Aditya Sharma", desc: "Short write-ups from building this site and other projects: GSAP, React, performance and debugging." }] : []),
+        ...notes.map((n) => ({ path: `/notes/${n.slug}`, title: `${n.title} — Aditya Sharma`, desc: n.summary, date: n.date })),
         ...projects.map((p) => ({ path: `/projects/${p.slug}`, title: `${p.name} — Aditya Sharma`, desc: p.summary, image: `/og/${p.slug}.png` })),
       ];
 
@@ -52,10 +67,11 @@ export default function seo() {
         const image = `${site}${p.image && fs.existsSync(path.join(outDir, p.image)) ? p.image : "/og.png"}`;
         const ld = {
           "@context": "https://schema.org",
-          "@type": p.path === "/" ? "Person" : "WebPage",
+          "@type": p.path === "/" ? "Person" : p.date ? "BlogPosting" : "WebPage",
           name: p.path === "/" ? "Aditya Sharma" : p.title,
           url,
           description: p.desc,
+          ...(p.date && { datePublished: p.date, author: { "@type": "Person", name: "Aditya Sharma" } }),
           ...(p.path === "/" && { jobTitle: "Full Stack Developer", sameAs: ["https://github.com/Adityasharma3010"] }),
         };
         const head = [
@@ -92,7 +108,7 @@ export default function seo() {
       const today = new Date().toISOString().slice(0, 10);
       const urls = pages.map((p) => `  <url><loc>${site}${p.path === "/" ? "" : p.path}</loc><lastmod>${today}</lastmod><priority>${p.path === "/" ? "1.0" : p.path.startsWith("/projects/") ? "0.6" : "0.8"}</priority></url>`).join("\n");
       fs.writeFileSync(path.join(outDir, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
-      fs.writeFileSync(path.join(outDir, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${site}/sitemap.xml\n`);
+      fs.writeFileSync(path.join(outDir, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /api/\n\n# the neon side has no handle. only keys.\n\nSitemap: ${site}/sitemap.xml\n`);
       console.log(`[seo] wrote ${pages.length} pages, sitemap.xml, robots.txt for ${site}`);
     },
   };

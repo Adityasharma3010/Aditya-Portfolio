@@ -19,6 +19,7 @@ const ThemeToggle = () => {
       ref={btn}
       onClick={toggle}
       aria-label={`Switch to ${next} mode`}
+      title={mode === "light" ? "Not that mode. The other one." : undefined}
       className="relative grid h-10 w-10 place-items-center rounded-full border hairline text-fg transition-colors hover:bg-fg/10"
     >
       <span ref={icon} className="grid place-items-center">
