@@ -8,7 +8,7 @@ const Pill = ({ s }) => (
   <div className="group flex items-center gap-3 rounded-2xl border hairline bg-surface py-2.5 pl-2.5 pr-6 transition-colors duration-300 hover:border-accent/60">
     <span className="grid h-10 w-10 place-items-center rounded-xl bg-fg/[0.06] transition-colors duration-300 group-hover:bg-accent">
       {s.icon ? (
-        <img src={s.icon} alt="" className={`h-5 w-5 object-contain ${s.mono ? "icon-mono" : ""}`} loading="lazy" />
+        <img src={s.icon} alt="" className={`h-5 object-contain ${s.wide ? "w-8" : "w-5"} ${s.mono ? "icon-mono" : ""}`} loading="lazy" />
       ) : (
         <span className="font-mono text-[11px] font-medium uppercase text-accent transition-colors duration-300 group-hover:text-accent-ink">
           {s.name.replace(/[^A-Za-z]/g, "").slice(0, 2)}

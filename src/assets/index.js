@@ -23,6 +23,11 @@ import unreal from "./tech/Unreal_Engine-Logo.webp";
 import mysql from "./tech/mysql-icon.svg";
 import wordpress from "./tech/Wordpress-Logo.svg";
 import python from "./tech/Python.png";
+import gsapLogo from "./tech/gsap.svg";
+import expressLogo from "./tech/express.svg";
+import mongodbLogo from "./tech/mongodb.svg";
+import supabaseLogo from "./tech/supabase.svg";
+import bricksLogo from "./tech/bricks.svg";
 
 import bcit from "./company/bcit.png";
 import si from "./company/si.png";
@@ -32,6 +37,11 @@ import weatherapp from "./Weather-App.png";
 import gameslisting from "./Games-Listing.png";
 
 export {
+  gsapLogo,
+  expressLogo,
+  mongodbLogo,
+  supabaseLogo,
+  bricksLogo,
   logo,
   logosvg,
   backend,
