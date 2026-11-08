@@ -60,7 +60,7 @@ const ThemeMenu = () => {
         aria-expanded={open}
         aria-label="Choose theme"
         data-cursor="Theme"
-        className="flex h-10 items-center gap-2 rounded-full border hairline px-3 font-mono text-[11px] uppercase tracking-widest transition-colors hover:bg-fg/10 sm:px-4"
+        className="flex h-10 items-center gap-2 rounded-full border hairline px-2.5 font-mono text-[11px] uppercase tracking-widest transition-colors hover:bg-fg/10 min-[360px]:px-3 sm:px-4"
       >
         <span className="flex -space-x-1">
           {active.swatch[mode].slice(0, 3).map((c) => (

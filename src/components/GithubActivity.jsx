@@ -100,19 +100,19 @@ const GithubActivity = () => {
         )}
 
         {state !== "error" && (
-          <div className="grid gap-14 lg:grid-cols-[1.35fr_1fr]">
-            <div>
-              <div className="gh-stats mb-8 grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-14 lg:grid-cols-[1.35fr_1fr]">
+            <div className="min-w-0">
+              <div className="gh-stats mb-8 grid grid-cols-[repeat(3,minmax(0,1fr))] gap-3 sm:gap-6">
                 {[["Contributions", state === "ok" ? total : "–"], ["Active days", state === "ok" ? activeDays : "–"], ["Weeks shown", WEEKS]].map(([k, v]) => (
                   <div key={k} className="gh-stat border-t hairline pt-3">
                     <p className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">{v}</p>
-                    <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-muted">{k}</p>
+                    <p className="mt-1 font-mono text-[9px] uppercase leading-tight tracking-wider text-muted sm:text-[10px] sm:tracking-widest">{k}</p>
                   </div>
                 ))}
               </div>
 
               <div className="overflow-x-auto pb-2">
-                <div className="gh-grid grid min-w-[560px] auto-cols-fr grid-flow-col grid-rows-7 gap-[3px]" role="img" aria-label={`${total} contributions in the last ${WEEKS} weeks`}>
+                <div className="gh-grid grid auto-cols-fr grid-flow-col grid-rows-7 gap-[2px] sm:min-w-[560px] sm:gap-[3px]" role="img" aria-label={`${total} contributions in the last ${WEEKS} weeks`}>
                   {grid.cells.map((c, i) =>
                     c ? (
                       <span
@@ -132,7 +132,7 @@ const GithubActivity = () => {
               </p>
             </div>
 
-            <div className="gh-commits">
+            <div className="gh-commits min-w-0">
               <p className="mb-4 font-mono text-[11px] uppercase tracking-widest text-muted">Latest commits</p>
               <ul className="divide-y divide-line/10 border-y hairline">
                 {(data?.recent || Array.from({ length: 5 })).slice(0, 6).map((c, i) =>

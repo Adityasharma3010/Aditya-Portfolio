@@ -60,14 +60,14 @@ const Cursor = () => {
     <>
       <div
         ref={ring}
-        className="pointer-events-none fixed left-0 top-0 z-[95] flex h-9 w-9 items-center justify-center rounded-full border border-fg/40"
+        className="pointer-events-none fixed left-0 top-0 z-[200] flex h-9 w-9 items-center justify-center rounded-full border border-fg/40"
         aria-hidden="true"
       >
         <span ref={label} className="select-none font-mono text-[4px] font-medium uppercase tracking-wider text-accent-ink" />
       </div>
       <div
         ref={dot}
-        className="pointer-events-none fixed left-0 top-0 z-[95] h-1.5 w-1.5 rounded-full bg-accent"
+        className="pointer-events-none fixed left-0 top-0 z-[200] h-1.5 w-1.5 rounded-full bg-accent"
         aria-hidden="true"
       />
     </>

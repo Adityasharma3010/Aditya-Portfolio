@@ -101,12 +101,26 @@ const DefaultFX = ({ ready }) => {
       s.spot.style.setProperty("--my", `${e.clientY - r.top}px`);
     };
 
+    // on a phone: touch a project card with two fingers for the x-ray look
+    const twoFingers = (e) => {
+      if (e.touches.length !== 2) return;
+      const card = e.target.closest?.(".project-card");
+      if (!card) return;
+      if (card.hasAttribute("data-xray")) card.removeAttribute("data-xray");
+      else {
+        card.setAttribute("data-xray", "");
+        unlock("xray");
+      }
+    };
+
+    document.addEventListener("touchstart", twoFingers, { passive: true });
     document.addEventListener("pointerover", over);
     document.addEventListener("pointerover", overCard);
     document.addEventListener("pointermove", move, { passive: true });
     window.addEventListener("keydown", shift);
     window.addEventListener("keyup", shift);
     return () => {
+      document.removeEventListener("touchstart", twoFingers);
       window.removeEventListener("keydown", shift);
       window.removeEventListener("keyup", shift);
       document.removeEventListener("pointerover", over);

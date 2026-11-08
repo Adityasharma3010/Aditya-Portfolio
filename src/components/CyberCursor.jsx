@@ -8,7 +8,7 @@ const TRAIL = 9;
 const Arrow = ({ stroke, fill = "none", glow, className = "", innerRef }) => (
   <svg
     ref={innerRef}
-    className={`pointer-events-none fixed left-0 top-0 z-[96] ${className}`}
+    className={`pointer-events-none fixed left-0 top-0 z-[201] ${className}`}
     width="26"
     height="28"
     viewBox="0 0 26 28"
@@ -151,17 +151,17 @@ const CyberCursor = () => {
 
   return (
     <>
-      <div ref={lineH} className="pointer-events-none fixed inset-x-0 top-0 z-[91] h-px bg-accent2" aria-hidden="true" />
-      <div ref={lineV} className="pointer-events-none fixed inset-y-0 left-0 z-[91] w-px bg-accent2" aria-hidden="true" />
+      <div ref={lineH} className="pointer-events-none fixed inset-x-0 top-0 z-[196] h-px bg-accent2" aria-hidden="true" />
+      <div ref={lineV} className="pointer-events-none fixed inset-y-0 left-0 z-[196] w-px bg-accent2" aria-hidden="true" />
       {Array.from({ length: TRAIL }).map((_, i) => (
-        <i key={i} ref={(el) => (trail.current[i] = el)} className="pointer-events-none fixed left-0 top-0 z-[92] h-1 w-1 bg-accent2" aria-hidden="true" />
+        <i key={i} ref={(el) => (trail.current[i] = el)} className="pointer-events-none fixed left-0 top-0 z-[197] h-1 w-1 bg-accent2" aria-hidden="true" />
       ))}
 
-      <Arrow innerRef={ghostB} stroke="rgb(var(--accent3))" className="z-[94]" />
-      <Arrow innerRef={ghostA} stroke="rgb(var(--accent2))" className="z-[95]" />
+      <Arrow innerRef={ghostB} stroke="rgb(var(--accent3))" className="z-[199]" />
+      <Arrow innerRef={ghostA} stroke="rgb(var(--accent2))" className="z-[200]" />
       <Arrow innerRef={arrow} stroke="rgb(var(--accent))" fill="rgb(var(--bg) / 0.85)" glow />
 
-      <div ref={reticle} className="pointer-events-none fixed left-0 top-0 z-[93]" aria-hidden="true">
+      <div ref={reticle} className="pointer-events-none fixed left-0 top-0 z-[198]" aria-hidden="true">
         {["left-0 top-0 border-l-2 border-t-2", "right-0 top-0 border-r-2 border-t-2", "bottom-0 left-0 border-b-2 border-l-2", "bottom-0 right-0 border-b-2 border-r-2"].map((c) => (
           <span key={c} className={`absolute h-3 w-3 border-accent ${c}`} />
         ))}

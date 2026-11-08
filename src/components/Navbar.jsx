@@ -84,7 +84,7 @@ const Navbar = ({ ready }) => {
             ))}
           </ul>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 min-[360px]:gap-2">
             <button
               onClick={() => window.dispatchEvent(new Event("open-palette"))}
               aria-label="Open command palette"
@@ -97,7 +97,8 @@ const Navbar = ({ ready }) => {
             {cyber && <ThemeMenu />}
             <ThemeToggle />
             <MotionToggle />
-            {cyber && <SoundToggle />}
+            {/* hidden on the very smallest phones so the five buttons fit (the palette has a Sound blips entry) */}
+            {cyber && <span className="hidden min-[360px]:contents"><SoundToggle /></span>}
             <button
               onClick={() => toggleMenu(!open)}
               className="grid h-10 w-10 place-items-center rounded-full border hairline md:hidden"
@@ -125,6 +126,12 @@ const Navbar = ({ ready }) => {
           ))}
         </ul>
         <div className="mm-foot font-mono text-xs text-muted">
+          <button
+            onClick={() => { toggleMenu(false); setTimeout(() => window.dispatchEvent(new Event("open-palette")), 350); }}
+            className="mb-6 flex w-full items-center justify-between rounded-full border hairline px-5 py-3 text-left uppercase tracking-widest text-fg"
+          >
+            Search the site <span className="text-accent">→</span>
+          </button>
           <a href={`mailto:${profile.email}`} className="block text-fg">{profile.email}</a>
           <a href={profile.github} target="_blank" rel="noreferrer" className="mt-2 block">GitHub ↗</a>
         </div>

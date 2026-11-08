@@ -30,7 +30,7 @@ if (typeof window !== "undefined") {
 
 const toast = (title, sub) => {
   const pill = document.createElement("div");
-  pill.style.cssText = "display:flex;gap:.7rem;align-items:center;padding:.7rem 1.3rem;border-radius:999px;border:1px solid rgb(var(--accent2));background:rgb(var(--surface) / .94);color:rgb(var(--fg));font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;white-space:nowrap;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);";
+  pill.style.cssText = "display:flex;gap:.7rem;align-items:center;padding:.7rem 1.3rem;border-radius:999px;border:1px solid rgb(var(--accent2));background:rgb(var(--surface) / .94);color:rgb(var(--fg));font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;text-align:center;max-width:min(92vw,560px);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);";
   pill.innerHTML = `<span style="color:rgb(var(--accent2))">&#9733;</span><span>${title}</span><span style="opacity:.6">/ ${sub}</span>`;
   showToast(pill, 3300);
 };

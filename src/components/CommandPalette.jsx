@@ -3,6 +3,7 @@ import { gsap, prefersReducedMotion } from "../lib/gsap";
 import { profile } from "../data";
 import { projects } from "../data";
 import { notes } from "../data/notes";
+import { SECRETS } from "../lib/secrets";
 import { skins } from "../data/themes";
 import { useTheme } from "../context/Theme";
 import { useMotion } from "../context/Motion";
@@ -11,7 +12,7 @@ import { useLenis } from "./SmoothScroll";
 import { useJump } from "../hooks/useJump";
 import { blip, isSoundOn, toggleSound } from "../lib/sound";
 
-const GROUPS = ["Navigate", "Projects", "Theme", "Settings", "Links"];
+const GROUPS = ["Secrets", "Navigate", "Projects", "Theme", "Settings", "Links", "Notes"];
 
 // Ctrl/Cmd + K. Jump anywhere, switch theme, change settings. Arrow keys + Enter, Esc to close.
 const CommandPalette = () => {
@@ -105,6 +106,11 @@ const CommandPalette = () => {
   const filtered = useMemo(() => {
     const tokens = query.toLowerCase().split(/\s+/).filter(Boolean);
     const hits = commands.filter((cmd) => tokens.every((t) => cmd.keywords.includes(t)));
+    // typing a secret's code exactly offers to run it. That is how the codes work on a phone, which has no keyboard
+    const q = query.trim().toLowerCase();
+    if (q && SECRETS.some((s) => s.word === q || s.also === q)) {
+      hits.unshift({ group: "Secrets", label: `Run “${q}”`, hint: "a secret", keywords: q, run: () => window.dispatchEvent(new CustomEvent("run-cheat", { detail: q })) });
+    }
     return hits.sort((a, b) => GROUPS.indexOf(a.group) - GROUPS.indexOf(b.group));
   }, [commands, query]);
 
@@ -168,7 +174,7 @@ const CommandPalette = () => {
           <kbd className="rounded border hairline px-1.5 py-0.5 font-mono text-[10px] text-muted">ESC</kbd>
         </div>
 
-        <ul id="cp-list" ref={list} role="listbox" className="relative max-h-[50vh] overflow-y-auto p-2">
+        <ul id="cp-list" ref={list} role="listbox" data-lenis-prevent className="relative max-h-[50vh] overflow-y-auto p-2">
           <span ref={hl} className="pointer-events-none absolute inset-x-2 top-0 rounded-xl bg-fg/[0.08] opacity-0" style={{ boxShadow: "inset 2px 0 0 rgb(var(--accent))" }} />
           {filtered.length === 0 && <li className="px-4 py-8 text-center font-mono text-xs uppercase tracking-widest text-muted">No match</li>}
           {filtered.map((cmd, i) => {

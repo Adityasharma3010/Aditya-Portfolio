@@ -58,6 +58,15 @@ const Konami = () => {
 
     let typed = "";
     let arrows = "";
+    const pushArrow = (a) => {
+      typed = "";
+      arrows = (arrows + a).slice(-maxCombo);
+      const hit = comboList.find((c) => arrows.endsWith(c));
+      if (hit) {
+        arrows = "";
+        combos[hit]();
+      }
+    };
     const onKey = (e) => {
       if (e.repeat) return;
       if (e.target.matches?.("input, textarea, select, [contenteditable]")) return;
@@ -66,13 +75,7 @@ const Konami = () => {
       // arrow combos
       const arrow = ARROW_KEYS[e.key];
       if (arrow) {
-        typed = "";
-        arrows = (arrows + arrow).slice(-maxCombo);
-        const hit = comboList.find((c) => arrows.endsWith(c));
-        if (hit) {
-          arrows = "";
-          combos[hit]();
-        }
+        pushArrow(arrow);
         return;
       }
 
@@ -87,8 +90,47 @@ const Konami = () => {
         }
       }
     };
+
+    // touch: the same arrow combos as quick swipes (finger up / down / left / right). Taps, slow drags and anything
+    // that starts inside a dialog or game do not count, and a pause of a couple of seconds starts the combo over.
+    let sx = 0;
+    let sy = 0;
+    let st = 0;
+    let lastSwipe = 0;
+    const onTouchStart = (e) => {
+      if (e.touches.length !== 1 || e.target.closest?.('[role="dialog"], input, textarea')) { st = 0; return; }
+      sx = e.touches[0].clientX;
+      sy = e.touches[0].clientY;
+      st = performance.now();
+    };
+    const onTouchEnd = (e) => {
+      if (!st || e.changedTouches.length !== 1) return;
+      const dx = e.changedTouches[0].clientX - sx;
+      const dy = e.changedTouches[0].clientY - sy;
+      const ax = Math.abs(dx);
+      const ay = Math.abs(dy);
+      const now = performance.now();
+      const quick = now - st < 600;
+      st = 0;
+      if (!quick || Math.max(ax, ay) < 60) return;
+      if (now - lastSwipe > 2500) arrows = "";
+      lastSwipe = now;
+      pushArrow(ax > ay ? (dx > 0 ? "R" : "L") : dy > 0 ? "D" : "U");
+    };
+
+    // the command palette runs a code you typed into it (the way in on a phone, which has no keyboard shortcuts)
+    const onRun = (e) => words[e.detail]?.();
+
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("run-cheat", onRun);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("run-cheat", onRun);
+    };
   }, [mod, cyber, switchSkin]);
 
   return null;

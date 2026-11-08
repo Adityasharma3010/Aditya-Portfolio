@@ -1,10 +1,30 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { gsap, useGSAP, prefersReducedMotion } from "../lib/gsap";
 import { experiences } from "../data";
 import SectionHead from "./SectionHead";
 
 const Experience = () => {
   const root = useRef(null);
+
+  // the spine runs from the centre of the first dot to the centre of the last one (not the full height of the
+  // list, which stuck out above the first dot and past the last). Re-measured whenever the list changes size.
+  useEffect(() => {
+    const tl = root.current.querySelector(".timeline");
+    const spine = tl.querySelector(".spine");
+    const centre = (row) => row.offsetTop + row.querySelector(".exp-dot").offsetTop + row.querySelector(".exp-dot").offsetHeight / 2;
+    const place = () => {
+      const rows = tl.querySelectorAll(".exp");
+      if (!rows.length) return;
+      const top = centre(rows[0]);
+      spine.style.top = `${top}px`;
+      spine.style.height = `${Math.max(0, centre(rows[rows.length - 1]) - top)}px`;
+      spine.style.bottom = "auto";
+    };
+    place();
+    const ro = new ResizeObserver(place);
+    ro.observe(tl);
+    return () => ro.disconnect();
+  }, []);
 
   useGSAP(
     () => {
@@ -17,7 +37,7 @@ const Experience = () => {
       // the spine draws itself as you scroll
       gsap.fromTo(".spine-fill", { scaleY: 0 }, {
         scaleY: 1, ease: "none", transformOrigin: "top",
-        scrollTrigger: { trigger: ".timeline", start: "top 70%", end: "bottom 60%", scrub: true },
+        scrollTrigger: { trigger: ".spine", start: "top 70%", end: "bottom 60%", scrub: true },
       });
 
       gsap.utils.toArray(".exp").forEach((row) => {
@@ -36,7 +56,7 @@ const Experience = () => {
         <SectionHead index="03" label="Experience" title={<>Journey<span className="text-accent">.</span></>} />
 
         <div className="timeline relative pl-8 sm:pl-16">
-          <div className="absolute bottom-0 left-[7px] top-0 w-px bg-line/15 sm:left-[15px]">
+          <div className="spine absolute left-[7px] top-5 bottom-0 w-px bg-line/15 sm:left-[15px]">
             <div className="spine-fill h-full w-full bg-accent" />
           </div>
 

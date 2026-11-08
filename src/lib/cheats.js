@@ -61,7 +61,7 @@ const bigText = (parent, text, extra = "") => {
 // small pill at the bottom of the screen (stacks with the others)
 const toast = (title, sub, ms = 2800) => {
   const pill = document.createElement("div");
-  pill.style.cssText = `padding:.7rem 1.3rem;border-radius:999px;border:1px solid ${rgb("--accent")};background:${rgb("--surface", 0.92)};color:${rgb("--fg")};font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;white-space:nowrap;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);`;
+  pill.style.cssText = `padding:.7rem 1.3rem;border-radius:999px;border:1px solid ${rgb("--accent")};background:${rgb("--surface", 0.92)};color:${rgb("--fg")};font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;text-align:center;max-width:min(92vw,560px);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);`;
   pill.innerHTML = `<span style="color:${rgb("--accent")}">${title}</span><span style="opacity:.6"> / ${sub}</span>`;
   showToast(pill, ms);
 };
@@ -88,6 +88,9 @@ export const hooks = { jump: null };
 const pointer = { x: typeof window === "undefined" ? 0 : window.innerWidth / 2, y: typeof window === "undefined" ? 0 : window.innerHeight / 2 };
 if (typeof window !== "undefined") {
   window.addEventListener("pointermove", (e) => { pointer.x = e.clientX; pointer.y = e.clientY; }, { passive: true });
+  const touchAt = (e) => { const t = e.touches[0]; if (t) { pointer.x = t.clientX; pointer.y = t.clientY; } };
+  window.addEventListener("touchstart", touchAt, { passive: true });
+  window.addEventListener("touchmove", touchAt, { passive: true });
 }
 
 // full screen canvas driven by the gsap ticker; draw(g, w, h, t) gets t = 0..1 over `ms`
@@ -440,7 +443,8 @@ const flashlight = effect("Lights out", "flashlight", (finish) => {
   const setR = () => dark.style.setProperty("--r", `${o.r}px`);
   aim();
   window.addEventListener("pointermove", aim, { passive: true });
-  gsap.timeline({ onComplete: () => { window.removeEventListener("pointermove", aim); l.remove(); finish(); } })
+  window.addEventListener("touchmove", aim, { passive: true });
+  gsap.timeline({ onComplete: () => { window.removeEventListener("pointermove", aim); window.removeEventListener("touchmove", aim); l.remove(); finish(); } })
     .to(o, { r: 190, duration: 0.8, ease: "power2.out", onUpdate: setR }, 0)
     .to(o, { r: 172, duration: 0.07, repeat: 100, yoyo: true, ease: "none", onUpdate: setR }, 0.8)
     .to(dark, { opacity: 0, duration: 0.6 }, 8.4);

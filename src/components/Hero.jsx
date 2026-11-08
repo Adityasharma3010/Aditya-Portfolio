@@ -123,7 +123,7 @@ const Hero = ({ ready }) => {
       </div>
 
       {/* rotating badge */}
-      <div title="30 lives" data-egg-badge role="img" aria-label="Rotating badge. Four keys, eight presses." className="hero-scroll absolute right-5 top-32 z-10 hidden h-36 w-36 sm:block md:right-10 md:top-36 md:h-44 md:w-44">
+      <div title="30 lives" data-egg-badge role="img" aria-label="Rotating badge. Four keys, eight presses." style={{ touchAction: "none" }} className="hero-scroll absolute right-4 top-24 z-10 h-20 w-20 sm:right-5 sm:top-32 sm:h-36 sm:w-36 md:right-10 md:top-36 md:h-44 md:w-44">
        <div className="hero-fade relative flex h-full w-full items-center justify-center">
         <svg className="hero-badge-ring absolute inset-0 h-full w-full" viewBox="0 0 200 200" aria-hidden="true">
           <defs><path id="badgePath" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0" /></defs>
@@ -131,7 +131,7 @@ const Hero = ({ ready }) => {
             <textPath href="#badgePath" textLength="498" lengthAdjust="spacing">Full stack · React · GSAP · WordPress · </textPath>
           </text>
         </svg>
-        <span className="grid h-14 w-14 place-items-center rounded-full bg-accent font-display text-lg font-extrabold text-accent-ink">AS</span>
+        <span className="grid h-9 w-9 place-items-center rounded-full bg-accent font-display text-sm font-extrabold text-accent-ink sm:h-14 sm:w-14 sm:text-lg">AS</span>
        </div>
       </div>
 

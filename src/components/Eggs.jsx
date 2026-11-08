@@ -40,11 +40,17 @@ const Eggs = () => {
       scrambleText(logo, { duration: 1.1 });
     });
 
-    // ---- name: triple-click the hero title ----
+    // ---- name: triple-click (or triple-tap) the hero title ----
+    let taps = 0;
+    let lastTap = 0;
     on(document, "click", (e) => {
-      if (e.detail !== 3) return;
       const title = e.target.closest?.(".hero-title");
       if (!title) return;
+      const now = performance.now();
+      taps = now - lastTap < 700 ? taps + 1 : 1;
+      lastTap = now;
+      if (taps < 3) return;
+      taps = 0;
       unlock("name");
       if (!prefersReducedMotion()) scrambleText(title, { duration: 1.4 });
     });
@@ -85,6 +91,34 @@ const Eggs = () => {
       acc = 0;
       if (unlock("bottom")) notice("That is the bottom. There is nothing below. Go say hi.", 4200);
     }, { passive: true });
+
+    // ---- bottom, on a phone: keep dragging up at the very bottom ----
+    let ty = 0;
+    let tacc = 0;
+    on(window, "touchstart", (e) => { ty = e.touches[0].clientY; tacc = 0; }, { passive: true });
+    on(window, "touchmove", (e) => {
+      const y = e.touches[0].clientY;
+      const dy = ty - y;
+      ty = y;
+      const el = document.documentElement;
+      const atBottom = Math.ceil(window.scrollY + window.innerHeight) >= el.scrollHeight - 2;
+      if (!atBottom || dy <= 0) { tacc = 0; return; }
+      tacc += dy;
+      if (tacc < 500) return;
+      tacc = 0;
+      if (unlock("bottom")) notice("That is the bottom. There is nothing below. Go say hi.", 4200);
+    }, { passive: true });
+
+    // ---- touch tooltips: press and hold anything with a title (a phone has no hover) ----
+    let hold = 0;
+    on(document, "touchstart", (e) => {
+      clearTimeout(hold);
+      const el = e.touches.length === 1 ? e.target.closest?.("[title]") : null;
+      if (!el) return;
+      hold = setTimeout(() => { const t = el.getAttribute("title"); if (t) notice(t, 3500); }, 550);
+    }, { passive: true });
+    ["touchend", "touchmove", "touchcancel"].forEach((t) => on(document, t, () => clearTimeout(hold), { passive: true }));
+    cleanups.push(() => clearTimeout(hold));
 
     // ---- owl: visiting in the small hours ----
     const hour = new Date().getHours();
