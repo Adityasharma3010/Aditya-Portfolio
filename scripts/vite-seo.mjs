@@ -56,6 +56,7 @@ export default function seo() {
         { path: "/projects", title: "Projects — Aditya Sharma", desc: `All ${projects.length} projects by Aditya Sharma, newest first: React, MERN, Supabase and WordPress builds.` },
         { path: "/resume", title: "Resume — Aditya Sharma", desc: "Resume of Aditya Sharma, full stack developer: experience, skills and selected projects." },
         { path: "/uses", title: "Uses — Aditya Sharma", desc: "The languages, frameworks, services and tools Aditya Sharma builds with." },
+        { path: "/work-with-me", title: "Work with me — Aditya Sharma", desc: "Hire Aditya Sharma, a full stack developer, to build a fast, SEO-ready website or web app with React, the MERN stack or WordPress and Bricks." },
         ...(notes.length ? [{ path: "/notes", title: "Notes — Aditya Sharma", desc: "Short write-ups from building this site and other projects: GSAP, React, performance and debugging." }] : []),
         ...notes.map((n) => ({ path: `/notes/${n.slug}`, title: `${n.title} — Aditya Sharma`, desc: n.summary, date: n.date })),
         ...projects.map((p) => ({ path: `/projects/${p.slug}`, title: `${p.name} — Aditya Sharma`, desc: p.summary, image: `/og/${p.slug}.png` })),

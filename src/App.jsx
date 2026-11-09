@@ -18,6 +18,7 @@ import Home from "./pages/Home";
 // everything except the home page and the default skin is loaded on demand
 const Resume = lazy(() => import("./pages/Resume"));
 const Uses = lazy(() => import("./pages/Uses"));
+const WorkWithMe = lazy(() => import("./pages/WorkWithMe"));
 const ProjectsArchive = lazy(() => import("./pages/ProjectsArchive"));
 const ProjectPage = lazy(() => import("./pages/ProjectPage"));
 const Notes = lazy(() => import("./pages/Notes"));
@@ -75,6 +76,7 @@ const Shell = () => {
           <Route path="/projects/:slug" element={<ProjectPage />} />
           <Route path="/resume" element={<Resume />} />
           <Route path="/uses" element={<Uses />} />
+          <Route path="/work-with-me" element={<WorkWithMe />} />
           <Route path="/notes" element={<Notes />} />
           <Route path="/notes/:slug" element={<NotePage />} />
           <Route path="*" element={<NotFound />} />

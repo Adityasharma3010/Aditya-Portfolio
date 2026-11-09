@@ -89,6 +89,7 @@ const CommandPalette = () => {
     add("Navigate", "All projects", "archive, newest first", "archive list", () => go("/projects"));
     add("Navigate", "Resume", "print or save as PDF", "cv", () => go("/resume"));
     add("Navigate", "Uses", "my stack and tools", "tools stack setup", () => go("/uses"));
+    add("Navigate", "Work with me", "fast, SEO-ready sites and apps", "hire freelance project services work together contact", () => go("/work-with-me"));
     add("Navigate", "Notes", "short write-ups", "blog writing articles posts", () => go("/notes"));
     add("Navigate", "Secrets", "hidden things you have found", "easter eggs achievements cheats hidden progress", () => window.dispatchEvent(new Event("open-secrets")));
     projects.forEach((p) => add("Projects", p.name, `${p.category} · ${p.status}`, `${p.slug} ${p.tags.join(" ")}`, () => go(`/projects/${p.slug}`)));
