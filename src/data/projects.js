@@ -196,6 +196,12 @@ const droppedBySlug = Object.fromEntries(
   Object.entries(dropped).map(([path, url]) => [path.split("/").pop().replace(/\.\w+$/, ""), url])
 );
 
+// optional short looping clips: drop src/assets/projects/<slug>.mp4 (or .webm) next to the screenshot and the card plays it
+const clips = import.meta.glob("../assets/projects/*.{mp4,webm}", { eager: true, query: "?url", import: "default" });
+const clipBySlug = Object.fromEntries(
+  Object.entries(clips).map(([path, url]) => [path.split("/").pop().replace(/\.\w+$/, ""), url])
+);
+
 const flatTags = (p) => p.stack.flatMap((g) => g.items).slice(0, 4);
 
 export const projects = raw
@@ -207,6 +213,7 @@ export const projects = raw
       createdAt: g.createdAt || p.createdAt,
       tags: flatTags(p),
       image: droppedBySlug[p.slug] || p.image || null,
+      video: clipBySlug[p.slug] || null,
       source: `https://github.com/${meta.repo}`,
       site: meta.live || g.homepage || null,
       github: g.repo ? g : null, // { pushedAt, stars, forks, languages }

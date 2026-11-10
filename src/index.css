@@ -64,9 +64,9 @@
   --fg: 10 12 26;
   --muted: 82 92 114;
   --line: 0 90 130;
-  --accent: 232 0 104;
+  --accent: 190 0 84;
   --accent-ink: 255 255 255;
-  --accent2: 0 138 190;
+  --accent2: 0 100 145;
   --accent3: 196 150 0;
   --star: #e80068;
   --scan-a: 0.09;
@@ -461,6 +461,19 @@ html {
     text-decoration: none;
   }
 }
+
+/* keyboard focus: a clear ring in every skin and theme (mouse clicks don't show it) */
+:focus-visible {
+  outline: 2px solid rgb(var(--accent));
+  outline-offset: 3px;
+}
+main:focus {
+  outline: none;
+}
+
+/* contrast: the light Cyberpunk background is too pale for the HUD's 80% tints to reach 4.5:1 */
+[data-skin="cyber"][data-theme="light"] .text-accent\/80 { color: rgb(var(--accent)); }
+[data-skin="cyber"][data-theme="light"] .text-accent2\/80 { color: rgb(var(--accent2)); }
 
 /* easter egg: hold Shift over a project card */
 .project-card[data-xray] .card-img > * { filter: grayscale(1) invert(1) contrast(1.15); }

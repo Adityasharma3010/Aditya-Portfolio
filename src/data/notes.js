@@ -5,6 +5,53 @@
 // In text, `backticks` make inline code.
 export const notes = [
   {
+    slug: "seamless-css-marquee",
+    title: "A seamless infinite marquee with no library, and why gap breaks the loop",
+    date: "2026-11-09",
+    summary: "A pill marquee in plain CSS and JS for a WordPress and Bricks page: pause on hover, reduced motion, and the one-line reason most loops visibly jump.",
+    tags: ["CSS", "JavaScript", "WordPress"],
+    body: [
+      { type: "p", text: "I needed a row of pills (things like “100% White-Label” and “NDA Protected”) that scrolls forever on a Bricks Builder page. The rules were strict: vanilla CSS and JS pasted into WPCode, no PHP, no GSAP, jQuery or Swiper, and it had to survive Bricks regenerating its IDs. So the script hooks onto a class, never onto a generated ID." },
+      { type: "h", text: "The loop that jumps" },
+      { type: "p", text: "The usual trick is to duplicate the track and animate it by `-50%`. It looks fine until the loop restarts and the whole row twitches. The cause is `gap` on the flex container: with two copies there is a gap between them, but the gap after the last pill of the second copy does not exist, so half of the track is not the width of one copy. Use `margin-right` on each item instead, so every copy ends with its own spacing and the maths is exact." },
+      { type: "h", text: "The CSS" },
+      { type: "code", lang: "css", text: ".marquee { overflow: hidden; }\n.marquee-track {\n  display: flex;\n  width: max-content;\n  animation: marquee var(--dur, 30s) linear infinite;\n}\n.marquee:hover .marquee-track { animation-play-state: paused; } /* resumes from the same spot */\n.marquee-group { display: flex; flex-shrink: 0; margin: 0; padding: 0; list-style: none; }\n.marquee-group li { margin-right: 16px; white-space: nowrap; }  /* margin, not gap */\n@keyframes marquee { to { transform: translateX(var(--shift, -50%)); } }\n\n@media (prefers-reduced-motion: reduce) {\n  .marquee-track { animation: none; }\n  .marquee { overflow-x: auto; }\n}" },
+      { type: "h", text: "The JavaScript" },
+      { type: "p", text: "Instead of assuming two copies, the script measures one group, clones it enough times to cover the container, and shifts by exactly one group’s width. It runs again on resize and once fonts have loaded, because pills change width when the real font arrives." },
+      { type: "code", lang: "js", text: "function initMarquee(root, speed = 60) {          // speed in px per second\n  if (root.dataset.ready) return;                  // safe to call twice\n  root.dataset.ready = \"1\";\n  const track = root.querySelector(\".marquee-track\");\n  const group = track.firstElementChild;\n\n  const build = () => {\n    track.querySelectorAll(\"[data-clone]\").forEach((n) => n.remove());\n    const w = group.getBoundingClientRect().width;\n    if (!w) return;\n    const copies = Math.ceil(root.clientWidth / w) + 1;\n    for (let i = 0; i < copies; i++) {\n      const c = group.cloneNode(true);\n      c.setAttribute(\"aria-hidden\", \"true\");       // screen readers read the pills once\n      c.dataset.clone = \"\";\n      track.appendChild(c);\n    }\n    root.style.setProperty(\"--shift\", -w + \"px\");\n    root.style.setProperty(\"--dur\", w / speed + \"s\");\n  };\n\n  new ResizeObserver(build).observe(root);\n  document.fonts?.ready.then(build);\n}\ndocument.querySelectorAll(\".marquee\").forEach((el) => initMarquee(el));" },
+      { type: "h", text: "Things worth keeping" },
+      { type: "list", items: [
+        "Pause on hover is just `animation-play-state`. It resumes from the exact position, with no JavaScript.",
+        "Reduced motion turns the animation off and lets the row scroll by hand, so nothing is hidden from those users.",
+        "The background colour lives on a wrapper div, not on the section, so the same snippet works on pages with different backgrounds.",
+        "Faded edges are a `mask-image` gradient on `.marquee`, which keeps them independent of the background colour.",
+      ] },
+    ],
+  },
+  {
+    slug: "bricks-mega-menu-active-class",
+    title: "Mega menu in Bricks: from a custom class toggle to builder-only interactions",
+    date: "2026-11-08",
+    summary: "I built a hover mega menu with a few lines of JS first, then rebuilt it with Bricks interactions. The attribute selector quote that made the second version work.",
+    tags: ["WordPress", "Bricks", "JavaScript"],
+    body: [
+      { type: "p", text: "A company site needed a mega menu: a list of services on the left, and a panel on the right that changes as you hover each service. I built it twice, and the second version is the one that stayed." },
+      { type: "h", text: "Version one: toggle .active" },
+      { type: "p", text: "Each list item has an index, and each panel carries a matching `data-child` attribute. Hovering an item toggles `.active` on the item and on its panel, and CSS does the rest. Using a class instead of setting `display: flex` inline means the hover styles and the active styles can share one rule." },
+      { type: "code", lang: "js", text: "const items = document.querySelectorAll(\".menu li\");\nconst panels = document.querySelectorAll(\"[data-child]\");\n\nconst show = (i) => {\n  items.forEach((li, n) => li.classList.toggle(\"active\", n === i));\n  panels.forEach((p) => p.classList.toggle(\"active\", Number(p.dataset.child) === i));\n};\nitems.forEach((li, i) => li.addEventListener(\"mouseenter\", () => show(i)));" },
+      { type: "code", lang: "css", text: "[data-child] { display: none; }\n[data-child].active { display: flex; }\n.menu li:hover,\n.menu li.active { color: var(--accent); }" },
+      { type: "p", text: "It worked, but I kept finding edge cases while testing on video, and anyone editing the menu in the builder had to understand the script. I kept it as a backup." },
+      { type: "h", text: "Version two: Bricks interactions only" },
+      { type: "p", text: "The rebuild uses Bricks’ own elements and interactions: a hover interaction on each list item that shows its panel and hides the others. The panels carry `data-child` set in the builder." },
+      { type: "list", items: [
+        "In the Show element interaction, the attribute selector has to quote the value: `[data-child=\"2\"]`. Unquoted, it did not match and nothing happened.",
+        "Panels all show on page load until they get `display: none`, so set that on the panels once the interactions work.",
+        "On mobile the same menu uses the standard Bricks nav with a mega menu template, and the third level opens as a popup template from the right through another interaction.",
+      ] },
+      { type: "p", text: "The trade-off is that adding another service still means touching an interaction, which is why I wanted it to be dynamic. For now the builder-only version wins because the person editing it next will find everything in one place." },
+    ],
+  },
+  {
     slug: "blur-on-a-moving-layer",
     title: "Cutting blocking time by moving a blur one element down",
     date: "2026-11-06",

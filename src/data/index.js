@@ -26,6 +26,8 @@ export const profile = {
   short: "Aditya",
   email: "nakul.adi@gmail.com",
   github: "https://github.com/Adityasharma3010",
+  // paste your cal.com / Calendly link here (e.g. "https://cal.com/yourname/intro"). Empty = every "Book a call" button stays hidden.
+  booking: "",
   roles: ["Full Stack Developer", "React / MERN", "WordPress & Bricks", "Motion nerd"],
 };
 

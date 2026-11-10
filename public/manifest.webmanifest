@@ -1,0 +1,22 @@
+{
+  "id": "/",
+  "name": "Aditya Sharma — Full Stack Developer",
+  "short_name": "Aditya Sharma",
+  "description": "Portfolio of Aditya Sharma, full stack developer: projects, notes and how to work together.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0b0b0d",
+  "theme_color": "#0b0b0d",
+  "lang": "en",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Projects", "url": "/projects" },
+    { "name": "Notes", "url": "/notes" },
+    { "name": "Work with me", "url": "/work-with-me" }
+  ]
+}

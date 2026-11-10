@@ -6,8 +6,8 @@ import { TLink } from "../components/PageTransition";
 import Magnetic from "../components/Magnetic";
 
 const Section = ({ title, children }) => (
-  <section className="rs-section grid gap-4 border-t hairline py-8 sm:grid-cols-[10rem_1fr] sm:gap-10 print:break-inside-avoid">
-    <h2 className="font-mono text-xs uppercase tracking-widest text-muted">{title}</h2>
+  <section className="rs-section grid gap-4 border-t hairline py-8 sm:grid-cols-[10rem_1fr] sm:gap-10 print:block print:py-5">
+    <h2 className="font-mono text-xs uppercase tracking-widest text-muted print:mb-3">{title}</h2>
     <div>{children}</div>
   </section>
 );
@@ -29,15 +29,22 @@ const Resume = () => {
   const picked = projects.slice(0, 6);
 
   return (
-    <main ref={root} className="min-h-screen px-5 pb-24 pt-36 print:p-0 sm:px-10">
+    <main id="main" ref={root} className="min-h-screen px-5 pb-24 pt-36 print:p-0 sm:px-10">
       <div className="mx-auto max-w-4xl">
         <div className="no-print mb-10 flex flex-wrap items-center justify-between gap-4">
           <TLink to="/" className="font-mono text-xs uppercase tracking-widest text-muted hover:text-fg">← Home</TLink>
-          <Magnetic>
-            <button onClick={() => window.print()} data-cursor="Print" className="rounded-full bg-accent px-7 py-3.5 font-mono text-xs font-medium uppercase tracking-widest text-accent-ink">
-              Print / Save as PDF
-            </button>
-          </Magnetic>
+          <div className="flex flex-wrap items-center gap-3">
+            <Magnetic>
+              <a href="/resume.pdf" download="Aditya-Sharma-Resume.pdf" data-cursor="Download" className="inline-block rounded-full bg-accent px-7 py-3.5 font-mono text-xs font-medium uppercase tracking-widest text-accent-ink">
+                Download PDF ↓
+              </a>
+            </Magnetic>
+            <Magnetic>
+              <button onClick={() => window.print()} data-cursor="Print" className="rounded-full border hairline px-7 py-3.5 font-mono text-xs uppercase tracking-widest hover:bg-fg/10">
+                Print
+              </button>
+            </Magnetic>
+          </div>
         </div>
 
         <header className="rs-head pb-10">

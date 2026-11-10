@@ -138,7 +138,7 @@ const ProjectPage = () => {
     : [];
 
   return (
-    <main ref={root} className="px-5 pb-16 pt-36 sm:px-10">
+    <main id="main" ref={root} className="px-5 pb-16 pt-36 sm:px-10">
       <div className="mx-auto max-w-[1500px]">
         <TLink to="/projects" className="pp-fade font-mono text-xs uppercase tracking-widest text-muted hover:text-fg">← All projects</TLink>
 
@@ -185,7 +185,7 @@ const ProjectPage = () => {
                   <div className="grid gap-3 sm:grid-cols-[4rem_1fr] sm:gap-6">
                     <span className="feat-num font-mono text-xs text-accent">{String(n + 1).padStart(2, "0")}</span>
                     <div className="transition-transform duration-500 group-hover:translate-x-2">
-                      <h3 className="feat-title font-display text-2xl font-bold tracking-tight sm:text-3xl">{f.title}</h3>
+                      <h2 className="feat-title font-display text-2xl font-bold tracking-tight sm:text-3xl">{f.title}</h2>
                       <p className="feat-desc mt-3 max-w-2xl text-muted">{f.desc}</p>
                     </div>
                   </div>

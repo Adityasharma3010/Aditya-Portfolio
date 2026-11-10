@@ -21,7 +21,7 @@ const About = () => {
       });
 
       // paragraph: words light up one by one as you scroll through it
-      const split = new SplitText(".about-text", { type: "words" });
+      const split = new SplitText(".about-text", { type: "words", aria: "none" });
       if (!reduce) {
         gsap.fromTo(split.words, { opacity: 0.12 }, {
           opacity: 1, ease: "none", stagger: 0.1,

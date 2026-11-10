@@ -172,6 +172,13 @@ const Contact = () => {
             <div>
               <p className="font-mono text-xs uppercase tracking-widest text-white/75">Elsewhere</p>
               <div className="mt-3 flex flex-wrap gap-3">
+                {profile.booking && (
+                  <Magnetic>
+                    <a href={profile.booking} target="_blank" rel="noreferrer" data-cursor="Book" data-scramble className="inline-block rounded-full bg-accent px-6 py-3 font-mono text-xs font-medium uppercase tracking-widest text-accent-ink">
+                      Book a call ↗
+                    </a>
+                  </Magnetic>
+                )}
                 <Magnetic>
                   <a href={profile.github} target="_blank" rel="noreferrer" data-cursor="Open" data-scramble className="inline-block rounded-full border hairline px-6 py-3 font-mono text-xs uppercase tracking-widest hover:bg-fg/10">
                     GitHub ↗
@@ -187,10 +194,10 @@ const Contact = () => {
           </div>
 
           <form onSubmit={onSubmit} className="ct-fade space-y-4">
-            <input className={field} name="name" value={form.name} onChange={onChange} placeholder="Your name" required autoComplete="name" />
-            <input className={field} type="email" name="email" value={form.email} onChange={onChange} placeholder="Your email" required autoComplete="email" />
+            <input className={field} name="name" value={form.name} onChange={onChange} placeholder="Your name" aria-label="Your name" required autoComplete="name" />
+            <input className={field} type="email" name="email" value={form.email} onChange={onChange} placeholder="Your email" aria-label="Your email" required autoComplete="email" />
             <input type="text" name="hp_field" value={trap} onChange={(e) => setTrap(e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" />
-            <textarea className={`${field} resize-none`} rows={4} name="message" value={form.message} onChange={onChange} placeholder="Tell me about your project" required />
+            <textarea className={`${field} resize-none`} rows={4} name="message" value={form.message} onChange={onChange} placeholder="Tell me about your project" aria-label="Tell me about your project" required />
             <div className="flex flex-wrap items-center gap-5">
               <Magnetic>
                 <button type="submit" disabled={status.type === "loading"} data-cursor="Send" className="rounded-full bg-accent px-9 py-5 font-mono text-xs font-medium uppercase tracking-widest text-accent-ink disabled:opacity-60">

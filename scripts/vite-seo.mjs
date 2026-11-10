@@ -56,6 +56,8 @@ export default function seo() {
         { path: "/projects", title: "Projects — Aditya Sharma", desc: `All ${projects.length} projects by Aditya Sharma, newest first: React, MERN, Supabase and WordPress builds.` },
         { path: "/resume", title: "Resume — Aditya Sharma", desc: "Resume of Aditya Sharma, full stack developer: experience, skills and selected projects." },
         { path: "/uses", title: "Uses — Aditya Sharma", desc: "The languages, frameworks, services and tools Aditya Sharma builds with." },
+        { path: "/changelog", title: "Changelog — Aditya Sharma", desc: "What changed on adityasharma.site: new pages, features and fixes, newest first." },
+        { path: "/guestbook", title: "Guestbook — Aditya Sharma", desc: "Leave a short message for Aditya Sharma. Messages appear after approval." },
         { path: "/work-with-me", title: "Work with me — Aditya Sharma", desc: "Hire Aditya Sharma, a full stack developer, to build a fast, SEO-ready website or web app with React, the MERN stack or WordPress and Bricks." },
         ...(notes.length ? [{ path: "/notes", title: "Notes — Aditya Sharma", desc: "Short write-ups from building this site and other projects: GSAP, React, performance and debugging." }] : []),
         ...notes.map((n) => ({ path: `/notes/${n.slug}`, title: `${n.title} — Aditya Sharma`, desc: n.summary, date: n.date })),
@@ -84,6 +86,7 @@ export default function seo() {
           `<meta name="twitter:title" content="${esc(p.title)}" />`,
           `<meta name="twitter:description" content="${esc(p.desc)}" />`,
           `<meta name="twitter:image" content="${image}" />`,
+          ...(notes.length ? [`<link rel="alternate" type="application/rss+xml" title="Aditya Sharma — Notes" href="${site}/feed.xml" />`] : []),
           `<script type="application/ld+json">${JSON.stringify(ld)}</script>`,
         ].join("\n    ");
         return tpl
@@ -106,11 +109,32 @@ export default function seo() {
         }
       }
 
+      // stamp the service worker so every deploy gets fresh caches (see public/sw.js)
+      const swPath = path.join(outDir, "sw.js");
+      if (fs.existsSync(swPath)) {
+        // every JS/CSS chunk except the 480 KB three.js star field, so any page opens offline without a big first download
+        const chunks = fs.readdirSync(path.join(outDir, "assets")).filter((f) => /\.(js|css)$/.test(f) && !f.startsWith("StarsBackground")).map((f) => `/assets/${f}`);
+        fs.writeFileSync(
+          swPath,
+          fs.readFileSync(swPath, "utf8").replace('"__BUILD__"', JSON.stringify(Date.now().toString(36))).replace('"__PRECACHE__"', JSON.stringify(chunks))
+        );
+      }
+
       const today = new Date().toISOString().slice(0, 10);
       const urls = pages.map((p) => `  <url><loc>${site}${p.path === "/" ? "" : p.path}</loc><lastmod>${today}</lastmod><priority>${p.path === "/" ? "1.0" : p.path.startsWith("/projects/") ? "0.6" : "0.8"}</priority></url>`).join("\n");
       fs.writeFileSync(path.join(outDir, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
+      if (notes.length) {
+        const x = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        const items = notes
+          .map((n) => `    <item>\n      <title>${x(n.title)}</title>\n      <link>${site}/notes/${n.slug}</link>\n      <guid isPermaLink="true">${site}/notes/${n.slug}</guid>\n      <pubDate>${new Date(n.date).toUTCString()}</pubDate>\n      <description>${x(n.summary)}</description>\n    </item>`)
+          .join("\n");
+        fs.writeFileSync(
+          path.join(outDir, "feed.xml"),
+          `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n  <channel>\n    <title>Aditya Sharma — Notes</title>\n    <link>${site}/notes</link>\n    <atom:link href="${site}/feed.xml" rel="self" type="application/rss+xml" />\n    <description>Short write-ups from building this site and other projects.</description>\n    <language>en</language>\n${items}\n  </channel>\n</rss>\n`
+        );
+      }
       fs.writeFileSync(path.join(outDir, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /api/\n\n# the neon side has no handle. only keys.\n\nSitemap: ${site}/sitemap.xml\n`);
-      console.log(`[seo] wrote ${pages.length} pages, sitemap.xml, robots.txt for ${site}`);
+      console.log(`[seo] wrote ${pages.length} pages, sitemap.xml, robots.txt${notes.length ? ", feed.xml" : ""} for ${site}`);
     },
   };
 }

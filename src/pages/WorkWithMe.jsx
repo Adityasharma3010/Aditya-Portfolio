@@ -49,7 +49,7 @@ const WorkWithMe = () => {
   const pill = "inline-block rounded-full border hairline px-6 py-3 font-mono text-xs uppercase tracking-widest hover:bg-fg/10";
 
   return (
-    <main ref={root} className="min-h-screen px-5 pb-24 pt-36 sm:px-10">
+    <main id="main" ref={root} className="min-h-screen px-5 pb-24 pt-36 sm:px-10">
       <div className="mx-auto max-w-[1500px]">
         <TLink to="/" className="font-mono text-xs uppercase tracking-widest text-muted hover:text-fg">← Home</TLink>
         <h1 className="wm-title mt-8 font-display text-[clamp(3rem,11vw,10rem)] font-extrabold leading-[0.9] tracking-[-0.04em]">Work with me<span className="text-accent">.</span></h1>
@@ -60,6 +60,11 @@ const WorkWithMe = () => {
               Start a project →
             </button>
           </Magnetic>
+          {profile.booking && (
+            <Magnetic>
+              <a href={profile.booking} target="_blank" rel="noreferrer" data-cursor="Book" className={pill}>Book a call ↗</a>
+            </Magnetic>
+          )}
           <Magnetic>
             <TLink to="/projects" data-cursor="Browse" className={pill}>See my work</TLink>
           </Magnetic>
@@ -127,6 +132,11 @@ const WorkWithMe = () => {
                 Use the form →
               </button>
             </Magnetic>
+            {profile.booking && (
+              <Magnetic>
+                <a href={profile.booking} target="_blank" rel="noreferrer" data-cursor="Book" className={pill}>Book a call ↗</a>
+              </Magnetic>
+            )}
             <Magnetic>
               <button onClick={copy} className={pill}>{copied ? "Copied ✓" : "Copy email"}</button>
             </Magnetic>

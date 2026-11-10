@@ -1,13 +1,45 @@
 // Screenshot if there is one, otherwise a generated browser mock so every project still looks like a real image.
+import { useEffect, useRef } from "react";
+import { prefersReducedMotion } from "../lib/gsap";
+
 const hue = (str) => [...str].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 360, 7);
 
+// A short looping clip. It only plays while it is on screen, and not at all in reduced-motion mode or with Data Saver on
+// (those visitors just see the screenshot as the poster).
+const Clip = ({ project, cls }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const v = ref.current;
+    if (!v || prefersReducedMotion() || navigator.connection?.saveData) return;
+    const io = new IntersectionObserver(([e]) => (e.isIntersecting ? v.play().catch(() => {}) : v.pause()), { threshold: 0.25 });
+    io.observe(v);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <video
+      ref={ref}
+      src={project.video}
+      poster={project.image || undefined}
+      muted
+      loop
+      playsInline
+      preload={project.image ? "none" : "metadata"}
+      aria-hidden="true"
+      tabIndex={-1}
+      className={cls}
+    />
+  );
+};
+
 const ProjectCover = ({ project, className = "", imgClass = "" }) => {
+  if (project.video) return <Clip project={project} cls={`h-full w-full object-cover object-top ${imgClass} ${className}`} />;
   if (project.image) {
     return (
       <img
         src={project.image}
         alt={`${project.name} screenshot`}
         loading="lazy"
+        decoding="async"
         className={`h-full w-full object-cover object-top ${imgClass} ${className}`}
       />
     );

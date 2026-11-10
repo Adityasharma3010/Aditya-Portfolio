@@ -11,6 +11,8 @@ import { usePageNav } from "./PageTransition";
 import { useLenis } from "./SmoothScroll";
 import { useJump } from "../hooks/useJump";
 import { blip, isSoundOn, toggleSound } from "../lib/sound";
+import { notice } from "../lib/toasts";
+import { canInstall, installApp, isInstalled } from "../lib/pwa";
 
 const GROUPS = ["Secrets", "Navigate", "Projects", "Theme", "Settings", "Links", "Notes"];
 
@@ -87,9 +89,12 @@ const CommandPalette = () => {
     add("Navigate", "GitHub activity", "recent commits", "activity contributions", () => jump("activity"));
     add("Navigate", "Contact", "send a message", "email hire form", () => jump("contact"));
     add("Navigate", "All projects", "archive, newest first", "archive list", () => go("/projects"));
-    add("Navigate", "Resume", "print or save as PDF", "cv", () => go("/resume"));
+    add("Navigate", "Resume", "read it on the site", "cv", () => go("/resume"));
+    add("Links", "Download resume (PDF)", "saves resume.pdf", "cv pdf download hire", () => { const a = document.createElement("a"); a.href = "/resume.pdf"; a.download = "Aditya-Sharma-Resume.pdf"; a.click(); });
     add("Navigate", "Uses", "my stack and tools", "tools stack setup", () => go("/uses"));
     add("Navigate", "Work with me", "fast, SEO-ready sites and apps", "hire freelance project services work together contact", () => go("/work-with-me"));
+    add("Navigate", "Changelog", "what changed on this site", "updates news releases", () => go("/changelog"));
+    add("Navigate", "Guestbook", "leave a message", "sign comment say hi", () => go("/guestbook"));
     add("Navigate", "Notes", "short write-ups", "blog writing articles posts", () => go("/notes"));
     add("Navigate", "Secrets", "hidden things you have found", "easter eggs achievements cheats hidden progress", () => window.dispatchEvent(new Event("open-secrets")));
     projects.forEach((p) => add("Projects", p.name, `${p.category} · ${p.status}`, `${p.slug} ${p.tags.join(" ")}`, () => go(`/projects/${p.slug}`)));
@@ -99,7 +104,10 @@ const CommandPalette = () => {
     add("Theme", `Mode: switch to ${mode === "dark" ? "light" : "dark"}`, `${skin} theme`, "dark light toggle", () => toggleMode());
     add("Settings", `Motion: ${reduced ? "Reduced" : "Full"}`, reduced ? "turn full motion on" : "turn reduced motion on", "reduce motion animation accessibility", () => toggleMotion());
     if (cyber) add("Settings", `Sound blips: ${isSoundOn() ? "On" : "Off"}`, "toggle UI sounds", "mute audio sound", () => toggleSound());
+    if (!isInstalled()) add("Settings", "Install as app", "add the site to your device", "pwa install app home screen", async () => { if (canInstall()) await installApp(); else notice("Use your browser’s menu: Install app, or Add to Home Screen."); });
     add("Links", "Copy email address", profile.email, "mail contact copy", () => navigator.clipboard?.writeText(profile.email));
+    if (profile.booking) add("Links", "Book a call", "opens your calendar in a new tab", "schedule meeting calendar cal calendly", () => window.open(profile.booking, "_blank", "noreferrer"));
+    add("Links", "RSS feed", "subscribe to the notes", "rss atom feed subscribe notes", () => window.open("/feed.xml", "_blank", "noreferrer"));
     add("Links", "GitHub profile", "opens in a new tab", "code repos", () => window.open(profile.github, "_blank", "noreferrer"));
     return c;
   }, [go, jump, skin, mode, cyber, reduced, switchSkin, toggleMode, toggleMotion]);

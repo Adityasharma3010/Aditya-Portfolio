@@ -20,7 +20,7 @@ const Block = ({ b }) => {
   if (b.type === "h") return <h2 className="np-block mt-14 font-display text-3xl font-bold tracking-tight sm:text-4xl">{b.text}</h2>;
   if (b.type === "code")
     return (
-      <pre className="np-block mt-6 overflow-x-auto rounded-2xl border hairline bg-surface p-5 font-mono text-[13px] leading-relaxed">
+      <pre tabIndex={0} className="np-block mt-6 overflow-x-auto rounded-2xl border hairline bg-surface p-5 font-mono text-[13px] leading-relaxed">
         <code>{b.text}</code>
       </pre>
     );
@@ -64,7 +64,7 @@ const NotePage = () => {
   if (!n) return <NotFound />;
 
   return (
-    <main ref={root} className="min-h-screen px-5 pb-24 pt-36 sm:px-10">
+    <main id="main" ref={root} className="min-h-screen px-5 pb-24 pt-36 sm:px-10">
       <div className="np-progress pointer-events-none fixed left-0 top-0 z-[60] h-[3px] w-full origin-left scale-x-0 bg-accent" aria-hidden="true" />
       <article className="mx-auto max-w-[760px]">
         <TLink to="/notes" className="np-fade font-mono text-xs uppercase tracking-widest text-muted hover:text-fg">← All notes</TLink>

@@ -25,7 +25,7 @@ const Uses = () => {
   );
 
   return (
-    <main ref={root} className="min-h-screen px-5 pb-24 pt-36 sm:px-10">
+    <main id="main" ref={root} className="min-h-screen px-5 pb-24 pt-36 sm:px-10">
       <div className="mx-auto max-w-[1500px]">
         <TLink to="/" className="font-mono text-xs uppercase tracking-widest text-muted hover:text-fg">← Home</TLink>
         <h1 className="us-title mt-8 font-display text-[clamp(3rem,11vw,10rem)] font-extrabold leading-[0.9] tracking-[-0.04em]">Uses<span className="text-accent">.</span></h1>

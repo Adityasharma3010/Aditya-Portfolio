@@ -13,12 +13,15 @@ import Navbar from "./components/Navbar";
 import PaletteGate from "./components/PaletteGate";
 import SecretsGate from "./components/SecretsGate";
 import Konami from "./components/Konami";
+import { SkipLink, RouteAnnouncer } from "./components/A11y";
 import Home from "./pages/Home";
 
 // everything except the home page and the default skin is loaded on demand
 const Resume = lazy(() => import("./pages/Resume"));
 const Uses = lazy(() => import("./pages/Uses"));
 const WorkWithMe = lazy(() => import("./pages/WorkWithMe"));
+const Guestbook = lazy(() => import("./pages/Guestbook"));
+const Changelog = lazy(() => import("./pages/Changelog"));
 const ProjectsArchive = lazy(() => import("./pages/ProjectsArchive"));
 const ProjectPage = lazy(() => import("./pages/ProjectPage"));
 const Notes = lazy(() => import("./pages/Notes"));
@@ -68,6 +71,8 @@ const Shell = () => {
       {/* remounted whenever the motion setting changes so every animation re-reads it */}
       <div key={epoch} style={{ display: "contents" }}>
         {cyber ? <Suspense fallback={null}><CyberCursor /></Suspense> : <Cursor />}
+        <SkipLink />
+        <RouteAnnouncer />
         <Navbar ready={ready} />
         <Suspense fallback={null}>
         <Routes>
@@ -77,6 +82,8 @@ const Shell = () => {
           <Route path="/resume" element={<Resume />} />
           <Route path="/uses" element={<Uses />} />
           <Route path="/work-with-me" element={<WorkWithMe />} />
+          <Route path="/guestbook" element={<Guestbook />} />
+          <Route path="/changelog" element={<Changelog />} />
           <Route path="/notes" element={<Notes />} />
           <Route path="/notes/:slug" element={<NotePage />} />
           <Route path="*" element={<NotFound />} />

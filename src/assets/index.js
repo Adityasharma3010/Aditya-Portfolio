@@ -34,7 +34,7 @@ import si from "./company/si.png";
 
 import laslesvpn from "./LaslesVPN.png";
 import weatherapp from "./Weather-App.png";
-import gameslisting from "./Games-Listing.png";
+import gameslisting from "./Games-Listing.webp";
 
 export {
   gsapLogo,

@@ -20,10 +20,11 @@ const FlowSteps = ({ title, steps }) => {
   return (
     <div ref={root}>
       <p className="mb-6 font-mono text-[11px] uppercase tracking-widest text-muted">{title}</p>
-      <ol className="fs-list relative pl-8">
-        <span className="absolute bottom-2 left-[7px] top-2 w-px bg-line/15">
+      <div className="relative">
+        <span aria-hidden="true" className="absolute bottom-2 left-[7px] top-2 w-px bg-line/15">
           <span className="fs-fill block h-full w-full bg-accent" />
         </span>
+        <ol className="fs-list pl-8">
         {steps.map((s, i) => (
           <li key={i} className="fs-step relative pb-8 last:pb-0">
             <span className="fs-dot absolute -left-[31px] top-1.5 h-3.5 w-3.5 rounded-full border-2 border-accent bg-bg" />
@@ -31,7 +32,8 @@ const FlowSteps = ({ title, steps }) => {
             <p className="mt-1.5 max-w-2xl text-muted">{s.text}</p>
           </li>
         ))}
-      </ol>
+        </ol>
+      </div>
     </div>
   );
 };

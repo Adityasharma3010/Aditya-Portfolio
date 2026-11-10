@@ -7,6 +7,7 @@ import Stack from "../components/Stack";
 import Experience from "../components/Experience";
 import Contact from "../components/Contact";
 import GithubActivity from "../components/GithubActivity";
+import Testimonials from "../components/Testimonials";
 import { useSeo } from "../hooks/useSeo";
 
 const Home = ({ ready }) => {
@@ -21,12 +22,13 @@ const Home = ({ ready }) => {
   }, [ready]);
 
   return (
-    <main>
+    <main id="main">
       <Hero ready={ready} />
       <About />
       <Projects />
       <Experience />
       <GithubActivity />
+      <Testimonials />
       <Stack />
       <Contact />
     </main>
