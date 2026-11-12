@@ -12,7 +12,7 @@ export const changelog = [
       "The site can now be installed as an app and opens offline.",
       "A real resume.pdf to download, replacing print-to-PDF.",
       "Projects can be filtered by type and by tech.",
-      "Notes got tag filters and an RSS feed, plus two new write-ups about a seamless CSS marquee and a Bricks mega menu.",
+      "A quiet corner of the site with write-ups got new entries and some housekeeping. It is not signposted, on purpose.",
       "Accessibility pass: a skip link, clear keyboard focus, labelled forms and better contrast.",
       "Smaller images (the biggest screenshot went from 1.8 MB to about 100 KB) and a CI check that lints, builds and smoke-tests every push.",
       "Project cards can play short looping clips, and this changelog is new too.",

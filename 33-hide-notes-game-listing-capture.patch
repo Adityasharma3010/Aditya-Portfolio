@@ -1,0 +1,271 @@
+diff --git a/index.html b/index.html
+index 479e33a..4183c9b 100644
+--- a/index.html
++++ b/index.html
+@@ -23,6 +23,7 @@
+     <meta name="twitter:card" content="summary_large_image" />
+     <meta name="twitter:image" content="/og.png" />
+     <!-- a door with no handle: four keys, eight presses -->
++    <!-- fixes get written down, plural -->
+     <title>Aditya Sharma — Full Stack Developer</title>
+ 
+     <link rel="preconnect" href="https://fonts.googleapis.com" />
+diff --git a/public/humans.txt b/public/humans.txt
+index 8d50857..0237f6a 100644
+--- a/public/humans.txt
++++ b/public/humans.txt
+@@ -8,3 +8,4 @@ Built with: React, Vite, GSAP, Tailwind, Lenis
+ Fun fact: this site has another side. It only opens from the keyboard.
+ The second half is: left, right, left, right.
+ The first half is further down the page.
++Also: I keep a notebook of what broke and how I fixed it. Its contents, plural, one slash from home.
+diff --git a/scripts/clips.mjs b/scripts/clips.mjs
+index 86378e4..08fa228 100644
+--- a/scripts/clips.mjs
++++ b/scripts/clips.mjs
+@@ -137,17 +137,31 @@ const smoothScroll = ({ to, ms }) =>
+     requestAnimationFrame(step);
+   });
+ 
+-const settle = async (page, minWait) => {
++const settle = async (page, minWait, meta = {}) => {
+   await page.waitForLoadState("networkidle", { timeout: 30000 }).catch(() => {});
+   await page.evaluate(() => document.fonts && document.fonts.ready);
+-  await page.evaluate(async () => {
+-    for (let y = 0; y < document.body.scrollHeight; y += 500) {
+-      window.scrollTo(0, y);
+-      await new Promise((r) => setTimeout(r, 100));
+-    }
+-    window.scrollTo(0, 0);
+-  });
++  // ("warm": false in repos.json skips this, for infinite-scroll sites where the page never ends)
++  if (meta.warm !== false) {
++    await page.evaluate(async () => {
++      for (let y = 0; y < document.body.scrollHeight; y += 500) {
++        window.scrollTo(0, y);
++        await new Promise((r) => setTimeout(r, 100));
++      }
++      window.scrollTo(0, 0);
++    });
++  }
+   await page.waitForTimeout(minWait);
++  // "waitFor": a selector, "waitCount": how many of them must be there (images must also have loaded). For slow data.
++  if (meta.waitFor) {
++    await page
++      .waitForFunction(
++        ({ s, n }) => [...document.querySelectorAll(s)].filter((e) => !(e instanceof HTMLImageElement) || (e.complete && e.naturalWidth > 0)).length >= n,
++        { s: meta.waitFor, n: meta.waitCount ?? 1 },
++        { timeout: 90000 }
++      )
++      .catch(() => console.log("  note: waited 90s for", meta.waitFor, "and it never showed up"));
++    await page.waitForTimeout(1500);
++  }
+   await page.waitForFunction(imagesLoaded, null, { timeout: 30000 }).catch(() => {});
+   await page.waitForFunction(noLoader, null, { timeout: 45000 }).catch(() => {});
+   await page.evaluate(domQuiet, { quiet: 1500, max: 15000 });
+@@ -180,7 +194,7 @@ const makeClip = async ({ name, live, meta, scheme }) => {
+   const t0 = Date.now(); // the video starts here
+   try {
+     await page.goto(live, { waitUntil: "domcontentloaded", timeout: 90000 });
+-    await settle(page, meta.wait ?? 3000);
++    await settle(page, meta.wait ?? 3000, meta);
+     if (cfg) await afterSettleDark(page, cfg);
+ 
+     const startAt = (Date.now() - t0) / 1000 + 0.3; // everything before this is loading, cut it off
+diff --git a/scripts/shots.mjs b/scripts/shots.mjs
+index e93186c..4488900 100644
+--- a/scripts/shots.mjs
++++ b/scripts/shots.mjs
+@@ -6,6 +6,9 @@
+ //   npm run shots -- --only=games-listing  redo just one (comma separate for more)
+ //   npm run shots -- --light-only          skip the dark-mode screenshots
+ //
++// Slow or endless sites: in src/data/repos.json give them "wait": 8000 (extra ms), "waitFor": "img.card" with "waitCount": 6
++// (wait until that many of them are there, images fully loaded) and "warm": false (do not scroll through the page first).
++//
+ // Every site is also opened in dark mode. If it really has one, that is saved as <slug>-dark.jpg and the portfolio shows
+ // it when the visitor is in dark mode. Sites without a dark mode keep just the light one. See scripts/darkmode.mjs
+ // for how to help a site that has a dark toggle (the "dark" option in src/data/repos.json).
+@@ -54,18 +57,32 @@ const domQuiet = ({ quiet, max }) =>
+     setTimeout(done, max);
+   });
+ 
+-const settle = async (page, minWait) => {
++const settle = async (page, minWait, meta = {}) => {
+   await page.waitForLoadState("networkidle", { timeout: 30000 }).catch(() => {});
+   await page.evaluate(() => document.fonts && document.fonts.ready);
+   // scroll through once so lazy images and scroll animations fire, then come back
+-  await page.evaluate(async () => {
+-    for (let y = 0; y < document.body.scrollHeight; y += 500) {
+-      window.scrollTo(0, y);
+-      await new Promise((r) => setTimeout(r, 100));
+-    }
+-    window.scrollTo(0, 0);
+-  });
++  // ("warm": false in repos.json skips this, for infinite-scroll sites where the page never ends)
++  if (meta.warm !== false) {
++    await page.evaluate(async () => {
++      for (let y = 0; y < document.body.scrollHeight; y += 500) {
++        window.scrollTo(0, y);
++        await new Promise((r) => setTimeout(r, 100));
++      }
++      window.scrollTo(0, 0);
++    });
++  }
+   await page.waitForTimeout(minWait);
++  // "waitFor": a selector, "waitCount": how many of them must be there (images must also have loaded). For slow data.
++  if (meta.waitFor) {
++    await page
++      .waitForFunction(
++        ({ s, n }) => [...document.querySelectorAll(s)].filter((e) => !(e instanceof HTMLImageElement) || (e.complete && e.naturalWidth > 0)).length >= n,
++        { s: meta.waitFor, n: meta.waitCount ?? 1 },
++        { timeout: 90000 }
++      )
++      .catch(() => console.log("  note: waited 90s for", meta.waitFor, "and it never showed up"));
++    await page.waitForTimeout(1500);
++  }
+   await page.waitForFunction(imagesLoaded, null, { timeout: 30000 }).catch(() => {});
+   await page.waitForFunction(noLoader, null, { timeout: 45000 }).catch(() => {});
+   await page.evaluate(domQuiet, { quiet: 1500, max: 15000 });
+@@ -85,7 +102,7 @@ const darkShot = async (slug, live, meta, lightBuf) => {
+     await forceDark(ctx, cfg);
+     const dp = await ctx.newPage();
+     await dp.goto(live, { waitUntil: "domcontentloaded", timeout: 90000 });
+-    await settle(dp, meta.wait ?? 3000);
++    await settle(dp, meta.wait ?? 3000, meta);
+     await afterSettleDark(dp, cfg);
+     const buf = await dp.screenshot({ type: "jpeg", quality: 82 });
+     const diff = await lookDifference(helper, lightBuf, buf);
+@@ -119,7 +136,7 @@ for (const [slug, meta] of Object.entries(repos)) {
+   const page = await lctx.newPage();
+   try {
+     await page.goto(live, { waitUntil: "domcontentloaded", timeout: 90000 });
+-    await settle(page, meta.wait ?? 3000);
++    await settle(page, meta.wait ?? 3000, meta);
+     if (lcfg) await afterSettleDark(page, lcfg);
+     const lightBuf = await page.screenshot({ type: "jpeg", quality: 82 });
+     await writeFile(fileURLToPath(file), lightBuf);
+diff --git a/src/components/CommandPalette.jsx b/src/components/CommandPalette.jsx
+index f0dfedc..01af545 100644
+--- a/src/components/CommandPalette.jsx
++++ b/src/components/CommandPalette.jsx
+@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+ import { gsap, prefersReducedMotion } from "../lib/gsap";
+ import { profile } from "../data";
+ import { projects } from "../data";
+-import { notes } from "../data/notes";
+ import { SECRETS } from "../lib/secrets";
+ import { skins } from "../data/themes";
+ import { useTheme } from "../context/Theme";
+@@ -14,7 +13,7 @@ import { blip, isSoundOn, toggleSound } from "../lib/sound";
+ import { notice } from "../lib/toasts";
+ import { canInstall, installApp, isInstalled } from "../lib/pwa";
+ 
+-const GROUPS = ["Secrets", "Navigate", "Projects", "Theme", "Settings", "Links", "Notes"];
++const GROUPS = ["Secrets", "Navigate", "Projects", "Theme", "Settings", "Links"];
+ 
+ // Ctrl/Cmd + K. Jump anywhere, switch theme, change settings. Arrow keys + Enter, Esc to close.
+ const CommandPalette = () => {
+@@ -95,10 +94,8 @@ const CommandPalette = () => {
+     add("Navigate", "Work with me", "fast, SEO-ready sites and apps", "hire freelance project services work together contact", () => go("/work-with-me"));
+     add("Navigate", "Changelog", "what changed on this site", "updates news releases", () => go("/changelog"));
+     add("Navigate", "Guestbook", "leave a message", "sign comment say hi", () => go("/guestbook"));
+-    add("Navigate", "Notes", "short write-ups", "blog writing articles posts", () => go("/notes"));
+     add("Navigate", "Secrets", "hidden things you have found", "easter eggs achievements cheats hidden progress", () => window.dispatchEvent(new Event("open-secrets")));
+     projects.forEach((p) => add("Projects", p.name, `${p.category} · ${p.status}`, `${p.slug} ${p.tags.join(" ")}`, () => go(`/projects/${p.slug}`)));
+-    notes.forEach((n) => add("Notes", n.title, n.tags.join(" · "), `${n.slug} ${n.tags.join(" ")}`, () => go(`/notes/${n.slug}`)));
+     // skin switching is only offered once you are inside Cyberpunk (the way in is a cheat code)
+     if (cyber) skins.forEach((s) => add("Theme", `Theme: ${s.label}`, skin === s.id ? "current" : s.note, "skin switch style", () => switchSkin(s.id)));
+     add("Theme", `Mode: switch to ${mode === "dark" ? "light" : "dark"}`, `${skin} theme`, "dark light toggle", () => toggleMode());
+@@ -107,7 +104,6 @@ const CommandPalette = () => {
+     if (!isInstalled()) add("Settings", "Install as app", "add the site to your device", "pwa install app home screen", async () => { if (canInstall()) await installApp(); else notice("Use your browser’s menu: Install app, or Add to Home Screen."); });
+     add("Links", "Copy email address", profile.email, "mail contact copy", () => navigator.clipboard?.writeText(profile.email));
+     if (profile.booking) add("Links", "Book a call", "opens your calendar in a new tab", "schedule meeting calendar cal calendly", () => window.open(profile.booking, "_blank", "noreferrer"));
+-    add("Links", "RSS feed", "subscribe to the notes", "rss atom feed subscribe notes", () => window.open("/feed.xml", "_blank", "noreferrer"));
+     add("Links", "GitHub profile", "opens in a new tab", "code repos", () => window.open(profile.github, "_blank", "noreferrer"));
+     return c;
+   }, [go, jump, skin, mode, cyber, reduced, switchSkin, toggleMode, toggleMotion]);
+diff --git a/src/components/Contact.jsx b/src/components/Contact.jsx
+index 188088a..97e00d4 100644
+--- a/src/components/Contact.jsx
++++ b/src/components/Contact.jsx
+@@ -6,7 +6,6 @@ import CyberGrid from "./CyberGrid";
+ import { useTheme } from "../context/Theme";
+ import Terminal from "./Terminal";
+ import { blip } from "../lib/sound";
+-import { TLink } from "./PageTransition";
+ 
+ // three.js only downloads when the contact section is about to appear
+ const Stars = lazy(() => import("./StarsBackground"));
+@@ -184,11 +183,6 @@ const Contact = () => {
+                     GitHub ↗
+                   </a>
+                 </Magnetic>
+-                <Magnetic>
+-                  <TLink to="/notes" data-cursor="Read" data-scramble className="inline-block rounded-full border hairline px-6 py-3 font-mono text-xs uppercase tracking-widest hover:bg-fg/10">
+-                    Notes →
+-                  </TLink>
+-                </Magnetic>
+               </div>
+             </div>
+           </div>
+diff --git a/src/data/changelog.js b/src/data/changelog.js
+index 05631fb..823eed1 100644
+--- a/src/data/changelog.js
++++ b/src/data/changelog.js
+@@ -12,7 +12,7 @@ export const changelog = [
+       "The site can now be installed as an app and opens offline.",
+       "A real resume.pdf to download, replacing print-to-PDF.",
+       "Projects can be filtered by type and by tech.",
+-      "Notes got tag filters and an RSS feed, plus two new write-ups about a seamless CSS marquee and a Bricks mega menu.",
++      "A quiet corner of the site with write-ups got new entries and some housekeeping. It is not signposted, on purpose.",
+       "Accessibility pass: a skip link, clear keyboard focus, labelled forms and better contrast.",
+       "Smaller images (the biggest screenshot went from 1.8 MB to about 100 KB) and a CI check that lints, builds and smoke-tests every push.",
+       "Project cards can play short looping clips, and this changelog is new too.",
+diff --git a/src/data/repos.json b/src/data/repos.json
+index 609080e..a74d253 100644
+--- a/src/data/repos.json
++++ b/src/data/repos.json
+@@ -5,7 +5,7 @@
+   "free-games-tracker": { "repo": "Adityasharma3010/FreeGamesTracker", "live": "https://free-games-tracker-black.vercel.app", "light": { "storage": { "fgt-theme": "light" } }, "dark": { "storage": { "fgt-theme": "dark" } }, "clip": { "max": 2500 } },
+   "binkeyit": { "repo": "Adityasharma3010/Binkeyit", "live": "https://binkeyit-three.vercel.app", "dark": false },
+   "book-store-app": { "repo": "Adityasharma3010/bookStoreApp", "live": "https://book-store-app-pro.vercel.app" },
+-  "games-listing": { "repo": "Adityasharma3010/Games-Listing", "live": "https://games-listing.vercel.app", "light": { "storage": { "theme": "light" } }, "dark": { "storage": { "theme": "dark" } } },
++  "games-listing": { "repo": "Adityasharma3010/Games-Listing", "live": "https://games-listing.vercel.app", "wait": 6000, "waitFor": "img[src*='rawg.io']", "waitCount": 6, "warm": false, "clip": { "max": 900 }, "light": { "storage": { "theme": "light" } }, "dark": { "storage": { "theme": "dark" } } },
+   "weather-app": { "repo": "Adityasharma3010/React-WeatherApp", "live": "https://weather-app-ten-kappa-82.vercel.app" },
+   "laslesvpn": { "repo": "Adityasharma3010/Tailwind-css-vpn", "live": "https://tailwind-css-vpn.vercel.app", "dark": false }
+ }
+diff --git a/src/lib/hints.js b/src/lib/hints.js
+index 88fa1d0..32f55e7 100644
+--- a/src/lib/hints.js
++++ b/src/lib/hints.js
+@@ -15,4 +15,5 @@ export const consoleHint = () => {
+     "color:inherit"
+   );
+   console.log("%c...and since you read the console: try hireMe()", "opacity:.7");
++  console.log("%cwhat breaks gets written down. plural. one slash from home.", "opacity:.45");
+ };
+diff --git a/src/pages/NotFound.jsx b/src/pages/NotFound.jsx
+index 0ce0ddd..002b208 100644
+--- a/src/pages/NotFound.jsx
++++ b/src/pages/NotFound.jsx
+@@ -12,6 +12,7 @@ const NotFound = () => {
+       <p className="font-display text-[28vw] font-extrabold leading-none text-outline">404</p>
+       <p className="mt-4 text-muted">That page doesn&apos;t exist.</p>
+       <p className="mt-2 font-mono text-[11px] uppercase tracking-widest text-muted/60">some doors open from the keyboard</p>
++      <p className="mt-2 font-mono text-[11px] uppercase tracking-widest text-muted/40">what broke here is probably written down somewhere</p>
+       <TLink to="/" className="mt-8 inline-block rounded-full bg-accent px-8 py-4 font-mono text-xs uppercase tracking-widest text-accent-ink">Back home</TLink>
+     </div>
+   </main>
+diff --git a/src/pages/Uses.jsx b/src/pages/Uses.jsx
+index 71ec4bf..3db596b 100644
+--- a/src/pages/Uses.jsx
++++ b/src/pages/Uses.jsx
+@@ -46,6 +46,7 @@ const Uses = () => {
+             </section>
+           ))}
+         </div>
++        <p className="mt-20 font-mono text-[11px] uppercase tracking-widest text-muted/40">the fixes that did not fit in a list are kept elsewhere</p>
+       </div>
+     </main>
+   );

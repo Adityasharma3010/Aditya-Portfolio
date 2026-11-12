@@ -156,7 +156,7 @@ const ProjectPage = () => {
           </Magnetic>
         </div>
 
-        <div className="pp-cover mt-14 aspect-[16/10] overflow-hidden rounded-[2rem] border hairline">
+        <div data-hover-play className="pp-cover mt-14 aspect-[16/10] overflow-hidden rounded-[2rem] border hairline">
           <div className="pp-img h-full w-full will-change-transform"><ProjectCover project={p} /></div>
         </div>
 

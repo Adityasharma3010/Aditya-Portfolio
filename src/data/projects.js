@@ -214,6 +214,9 @@ export const projects = raw
       tags: flatTags(p),
       image: droppedBySlug[p.slug] || p.image || null,
       video: clipBySlug[p.slug] || null,
+      // dark-mode captures (<slug>-dark.jpg / .webm), only present for sites that really have a dark mode
+      imageDark: droppedBySlug[`${p.slug}-dark`] || null,
+      videoDark: clipBySlug[`${p.slug}-dark`] || null,
       source: `https://github.com/${meta.repo}`,
       site: meta.live || g.homepage || null,
       github: g.repo ? g : null, // { pushedAt, stars, forks, languages }

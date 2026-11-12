@@ -46,6 +46,7 @@ const Uses = () => {
             </section>
           ))}
         </div>
+        <p className="mt-20 font-mono text-[11px] uppercase tracking-widest text-muted/40">the fixes that did not fit in a list are kept elsewhere</p>
       </div>
     </main>
   );

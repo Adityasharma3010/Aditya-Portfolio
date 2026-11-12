@@ -12,6 +12,7 @@ const NotFound = () => {
       <p className="font-display text-[28vw] font-extrabold leading-none text-outline">404</p>
       <p className="mt-4 text-muted">That page doesn&apos;t exist.</p>
       <p className="mt-2 font-mono text-[11px] uppercase tracking-widest text-muted/60">some doors open from the keyboard</p>
+      <p className="mt-2 font-mono text-[11px] uppercase tracking-widest text-muted/40">what broke here is probably written down somewhere</p>
       <TLink to="/" className="mt-8 inline-block rounded-full bg-accent px-8 py-4 font-mono text-xs uppercase tracking-widest text-accent-ink">Back home</TLink>
     </div>
   </main>

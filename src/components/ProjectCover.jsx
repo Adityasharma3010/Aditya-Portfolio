@@ -1,46 +1,63 @@
 // Screenshot if there is one, otherwise a generated browser mock so every project still looks like a real image.
 import { useEffect, useRef } from "react";
 import { prefersReducedMotion } from "../lib/gsap";
+import { useTheme } from "../context/Theme";
 
 const hue = (str) => [...str].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 360, 7);
 
-// A short looping clip. It only plays while it is on screen, and not at all in reduced-motion mode or with Data Saver on
-// (those visitors just see the screenshot as the poster).
-const Clip = ({ project, cls }) => {
+// A short looping clip that plays while the visitor hovers (or tabs onto) the card, and rests on the screenshot otherwise.
+// Never plays in reduced-motion mode, with Data Saver on, or on touch screens (they just see the screenshot).
+// Hover host: the nearest [data-hover-play] element or link around it. The archive's floating preview ignores the mouse,
+// so it listens for the "project-preview" event its rows send instead.
+const Clip = ({ src, poster, slug, cls, preview }) => {
   const ref = useRef(null);
   useEffect(() => {
     const v = ref.current;
     if (!v || prefersReducedMotion() || navigator.connection?.saveData) return;
-    const io = new IntersectionObserver(([e]) => (e.isIntersecting ? v.play().catch(() => {}) : v.pause()), { threshold: 0.25 });
-    io.observe(v);
-    return () => io.disconnect();
-  }, []);
-  return (
-    <video
-      ref={ref}
-      src={project.video}
-      poster={project.image || undefined}
-      muted
-      loop
-      playsInline
-      preload={project.image ? "none" : "metadata"}
-      aria-hidden="true"
-      tabIndex={-1}
-      className={cls}
-    />
-  );
+    const play = () => v.play().catch(() => {});
+    const stop = () => {
+      v.pause();
+      try { v.currentTime = 0; } catch { /* not loaded yet */ }
+    };
+    if (preview) {
+      const on = (e) => (e.detail === slug ? play() : stop());
+      window.addEventListener("project-preview", on);
+      return () => window.removeEventListener("project-preview", on);
+    }
+    const host = v.closest("[data-hover-play]") || v.closest("a");
+    if (!host) return;
+    const enter = (e) => e.pointerType === "mouse" && play();
+    const focus = (e) => e.target.matches?.(":focus-visible") && play(); // keyboard focus only, a tap or click is not
+    host.addEventListener("pointerenter", enter);
+    host.addEventListener("pointerleave", stop);
+    host.addEventListener("focusin", focus);
+    host.addEventListener("focusout", stop);
+    return () => {
+      host.removeEventListener("pointerenter", enter);
+      host.removeEventListener("pointerleave", stop);
+      host.removeEventListener("focusin", focus);
+      host.removeEventListener("focusout", stop);
+    };
+  }, [preview, slug]);
+  return <video ref={ref} src={src} poster={poster} muted loop playsInline preload="metadata" aria-hidden="true" className={cls} />;
 };
 
-const ProjectCover = ({ project, className = "", imgClass = "" }) => {
-  if (project.video) return <Clip project={project} cls={`h-full w-full object-cover object-top ${imgClass} ${className}`} />;
-  if (project.image) {
+// Dark mode shows the dark capture, but only for sites that really have a dark mode (the others keep their one screenshot).
+const ProjectCover = ({ project, className = "", imgClass = "", preview = false }) => {
+  const { mode } = useTheme();
+  const dark = mode === "dark" && (project.imageDark || project.videoDark);
+  const image = dark ? project.imageDark || project.image : project.image;
+  const video = dark ? project.videoDark : project.video;
+  const cls = `h-full w-full object-cover object-top ${imgClass} ${className}`;
+  if (video) return <Clip key={video} src={video} poster={image || undefined} slug={project.slug} cls={cls} preview={preview} />;
+  if (image) {
     return (
       <img
-        src={project.image}
+        src={image}
         alt={`${project.name} screenshot`}
         loading="lazy"
         decoding="async"
-        className={`h-full w-full object-cover object-top ${imgClass} ${className}`}
+        className={cls}
       />
     );
   }

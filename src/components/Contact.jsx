@@ -6,7 +6,6 @@ import CyberGrid from "./CyberGrid";
 import { useTheme } from "../context/Theme";
 import Terminal from "./Terminal";
 import { blip } from "../lib/sound";
-import { TLink } from "./PageTransition";
 
 // three.js only downloads when the contact section is about to appear
 const Stars = lazy(() => import("./StarsBackground"));
@@ -183,11 +182,6 @@ const Contact = () => {
                   <a href={profile.github} target="_blank" rel="noreferrer" data-cursor="Open" data-scramble className="inline-block rounded-full border hairline px-6 py-3 font-mono text-xs uppercase tracking-widest hover:bg-fg/10">
                     GitHub ↗
                   </a>
-                </Magnetic>
-                <Magnetic>
-                  <TLink to="/notes" data-cursor="Read" data-scramble className="inline-block rounded-full border hairline px-6 py-3 font-mono text-xs uppercase tracking-widest hover:bg-fg/10">
-                    Notes →
-                  </TLink>
                 </Magnetic>
               </div>
             </div>

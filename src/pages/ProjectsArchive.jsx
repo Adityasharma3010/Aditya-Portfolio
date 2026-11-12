@@ -59,8 +59,12 @@ const ProjectsArchive = () => {
     if (!preview.current) return;
     gsap.to(".pv", { opacity: (idx, el) => (el.dataset.slug === slug ? 1 : 0), duration: 0.2 });
     gsap.to(preview.current, { opacity: 1, scale: 1, duration: 0.5, ease: "power3.out" });
+    window.dispatchEvent(new CustomEvent("project-preview", { detail: slug })); // plays that project's clip
   };
-  const hide = () => preview.current && gsap.to(preview.current, { opacity: 0, scale: 0.6, duration: 0.3 });
+  const hide = () => {
+    window.dispatchEvent(new CustomEvent("project-preview", { detail: null }));
+    return preview.current && gsap.to(preview.current, { opacity: 0, scale: 0.6, duration: 0.3 });
+  };
 
   return (
     <main id="main" ref={root} className="min-h-screen px-5 pb-24 pt-36 sm:px-10">
@@ -118,7 +122,7 @@ const ProjectsArchive = () => {
       <div ref={preview} className="pointer-events-none fixed left-0 top-0 z-30 hidden h-[260px] w-[380px] overflow-hidden rounded-2xl border hairline lg:block">
         {projects.map((p) => (
           <div key={p.slug} data-slug={p.slug} className="pv absolute inset-0 opacity-0">
-            <ProjectCover project={p} />
+            <ProjectCover project={p} preview />
           </div>
         ))}
       </div>
