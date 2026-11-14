@@ -3,7 +3,7 @@ import * as THREE from "three";
 
 // The one bit of three.js we keep: a slow rotating star field.
 // Plain three (no r3f/drei), pauses off screen, fewer points on phones, DPR capped.
-const StarsBackground = ({ cyber = false }) => {
+const StarsBackground = ({ cyber = false, day = false }) => {
   const mount = useRef(null);
 
   useEffect(() => {
@@ -33,8 +33,19 @@ const StarsBackground = ({ cyber = false }) => {
     // mostly cool white, a few pink and lime stars for colour (one draw call, vertex colours)
     const col = new Float32Array(COUNT * 3);
     const c = new THREE.Color();
+    // day sky: the stars become sparkles in the theme's own colours (read from the panel, so both skins are right)
+    const tok = (n) => {
+      const v = getComputedStyle(el).getPropertyValue(`--${n}`).trim().split(/\s+/).map(Number);
+      return new THREE.Color(v[0] / 255, v[1] / 255, v[2] / 255);
+    };
+    const dayCols = day ? [tok("fg"), tok("accent"), tok("accent2"), tok("accent3")] : null;
     for (let i = 0; i < COUNT; i++) {
       const roll = Math.random();
+      if (day) {
+        const d = dayCols[roll < 0.12 ? 0 : roll < 0.5 ? 1 : roll < 0.8 ? 2 : 3];
+        col.set([d.r, d.g, d.b], i * 3);
+        continue;
+      }
       c.set(
         cyber
           ? roll < 0.12 ? "#00f0ff" : roll < 0.2 ? "#ff2a6d" : roll < 0.25 ? "#fcee0a" : "#dff6ff"
@@ -56,7 +67,7 @@ const StarsBackground = ({ cyber = false }) => {
     g.fillStyle = grad;
     g.fillRect(0, 0, 64, 64);
     const map = new THREE.CanvasTexture(sprite);
-    const mat = new THREE.PointsMaterial({ size: 0.006, map, alphaTest: 0.01, sizeAttenuation: true, transparent: true, depthWrite: false, vertexColors: true });
+    const mat = new THREE.PointsMaterial({ size: day ? 0.007 : 0.006, opacity: day ? 0.6 : 1, map, alphaTest: 0.01, sizeAttenuation: true, transparent: true, depthWrite: false, vertexColors: true });
     const points = new THREE.Points(geo, mat);
     const group = new THREE.Group();
     group.rotation.z = Math.PI / 4;
@@ -96,7 +107,7 @@ const StarsBackground = ({ cyber = false }) => {
       renderer.forceContextLoss();
       renderer.domElement.remove();
     };
-  }, [cyber]);
+  }, [cyber, day]);
 
   return <div ref={mount} className="absolute inset-0" aria-hidden="true" />;
 };

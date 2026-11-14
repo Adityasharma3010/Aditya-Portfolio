@@ -6,6 +6,7 @@ import { SECRETS } from "../lib/secrets";
 import { skins } from "../data/themes";
 import { useTheme } from "../context/Theme";
 import { useMotion } from "../context/Motion";
+import { useBuilder } from "../context/Builder";
 import { usePageNav } from "./PageTransition";
 import { useLenis } from "./SmoothScroll";
 import { useJump } from "../hooks/useJump";
@@ -34,6 +35,7 @@ const CommandPalette = () => {
   const lenis = useLenis();
   const { cyber, skin, mode, switchSkin, toggleMode } = useTheme();
   const { reduced, toggleMotion } = useMotion();
+  const { builder, toggleBuilder } = useBuilder();
 
   const openPalette = useCallback(() => {
     if (open) return;
@@ -100,13 +102,14 @@ const CommandPalette = () => {
     if (cyber) skins.forEach((s) => add("Theme", `Theme: ${s.label}`, skin === s.id ? "current" : s.note, "skin switch style", () => switchSkin(s.id)));
     add("Theme", `Mode: switch to ${mode === "dark" ? "light" : "dark"}`, `${skin} theme`, "dark light toggle", () => toggleMode());
     add("Settings", `Motion: ${reduced ? "Reduced" : "Full"}`, reduced ? "turn full motion on" : "turn reduced motion on", "reduce motion animation accessibility", () => toggleMotion());
+    if (builder) add("Settings", `Builder mode: ${builder && !reduced ? "On" : "Off"}`, "watch the page get built live as you scroll", "builder build cursors figma live design wireframe", () => toggleBuilder());
     if (cyber) add("Settings", `Sound blips: ${isSoundOn() ? "On" : "Off"}`, "toggle UI sounds", "mute audio sound", () => toggleSound());
     if (!isInstalled()) add("Settings", "Install as app", "add the site to your device", "pwa install app home screen", async () => { if (canInstall()) await installApp(); else notice("Use your browser’s menu: Install app, or Add to Home Screen."); });
     add("Links", "Copy email address", profile.email, "mail contact copy", () => navigator.clipboard?.writeText(profile.email));
     if (profile.booking) add("Links", "Book a call", "opens your calendar in a new tab", "schedule meeting calendar cal calendly", () => window.open(profile.booking, "_blank", "noreferrer"));
     add("Links", "GitHub profile", "opens in a new tab", "code repos", () => window.open(profile.github, "_blank", "noreferrer"));
     return c;
-  }, [go, jump, skin, mode, cyber, reduced, switchSkin, toggleMode, toggleMotion]);
+  }, [go, jump, skin, mode, cyber, reduced, builder, switchSkin, toggleMode, toggleMotion, toggleBuilder]);
 
   const filtered = useMemo(() => {
     const tokens = query.toLowerCase().split(/\s+/).filter(Boolean);

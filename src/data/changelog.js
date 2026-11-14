@@ -4,6 +4,14 @@
 */
 export const changelog = [
   {
+    date: "2026-11-14",
+    title: "A foreman",
+    items: [
+      "Somebody started leaving the editor open overnight. He only works when you ask for him, and he answers to his job title.",
+      "The contact section has a daytime sky in light mode now, in both looks.",
+    ],
+  },
+  {
     date: "2026-11-10",
     title: "Work with me, guestbook and an installable site",
     items: [

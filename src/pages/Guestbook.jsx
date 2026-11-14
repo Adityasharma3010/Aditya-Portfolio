@@ -4,6 +4,7 @@ import { noteDate } from "../data/notes";
 import { useSeo } from "../hooks/useSeo";
 import { TLink } from "../components/PageTransition";
 import Magnetic from "../components/Magnetic";
+import BuilderMount from "../components/BuilderMount";
 
 const field = "w-full rounded-2xl border hairline bg-surface px-5 py-4 text-lg text-fg transition-colors placeholder:text-muted focus:border-accent";
 
@@ -103,6 +104,7 @@ const Guestbook = () => {
           </section>
         </div>
       </div>
+      <BuilderMount />
     </main>
   );
 };

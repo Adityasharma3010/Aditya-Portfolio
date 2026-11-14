@@ -12,7 +12,8 @@ const Stars = lazy(() => import("./StarsBackground"));
 
 const Contact = () => {
   const root = useRef(null);
-  const { cyber } = useTheme();
+  const { cyber, mode } = useTheme();
+  const day = mode === "light"; // light mode = a daytime sky, dark mode = the night sky
   const [showStars, setShowStars] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState({ type: "idle", text: "" });
@@ -114,12 +115,14 @@ const Contact = () => {
     } catch { /* clipboard blocked, mailto link still works */ }
   };
 
-  const field = "w-full rounded-2xl border border-white/15 bg-black/40 px-5 py-4 font-display text-lg text-fg outline-none backdrop-blur-md transition-colors placeholder:text-white/70 focus:border-accent";
+  const glass = day ? "border-fg/15 bg-surface/70" : "border-white/15 bg-black/40";
+  const sub = day ? "text-fg/65" : "text-white/75";
+  const field = `w-full rounded-2xl border ${glass} px-5 py-4 font-display text-lg text-fg outline-none backdrop-blur-md transition-colors ${day ? "placeholder:text-fg/50" : "placeholder:text-white/70"} focus:border-accent`;
 
   return (
     <section id="contact" ref={root} className="px-2 pb-2 pt-10 sm:px-4 sm:pb-4">
-     {/* always dark: it is a night sky, whatever the site theme is */}
-     <div data-theme="dark" className="space relative isolate overflow-hidden rounded-[2rem] bg-bg px-5 pb-10 pt-28 text-fg sm:rounded-[3rem] sm:px-10 sm:pt-44">
+     {/* night sky in dark mode, a day sky in light mode (the panel carries its own theme so the tokens inside follow it) */}
+     <div data-theme={day ? "light" : "dark"} className={`space relative isolate overflow-hidden rounded-[2rem] bg-bg px-5 pb-10 pt-28 text-fg sm:rounded-[3rem] sm:px-10 sm:pt-44 ${day ? "border border-fg/10" : ""}`} style={day ? { backgroundImage: "linear-gradient(to bottom, rgb(var(--accent2) / 0.2), rgb(var(--bg)) 55%, rgb(var(--accent3) / 0.14))" } : undefined}>
       {/* nebula glows */}
       <div className="nebula nebula-a pointer-events-none absolute -left-[20%] top-[10%] -z-[1] h-[70vmax] w-[70vmax] will-change-transform">
         <div className="orb-glow absolute inset-0 rounded-full bg-[#7a2cff]/25 blur-[120px]" />
@@ -131,22 +134,22 @@ const Contact = () => {
       <div className="stars-layer absolute -inset-[6%] -z-[1]">
         {showStars && (
           <Suspense fallback={null}>
-            <Stars key={cyber ? "c" : "d"} cyber={cyber} />
+            <Stars key={`${cyber ? "c" : "d"}${day ? "-day" : ""}`} cyber={cyber} day={day} />
           </Suspense>
         )}
       </div>
 
       {/* shooting stars */}
       {[0, 1, 2].map((i) => (
-        <span key={i} className="shooting pointer-events-none absolute -z-[1] h-px w-40 origin-left bg-gradient-to-r from-white via-white/50 to-transparent opacity-0" />
+        <span key={i} className={`shooting pointer-events-none absolute -z-[1] h-px w-40 origin-left bg-gradient-to-r to-transparent opacity-0 ${day ? "from-accent via-accent/40" : "from-white via-white/50"}`} />
       ))}
 
       {cyber ? (
         <CyberGrid sun className="absolute inset-x-0 bottom-0 -z-[1] h-[62%]" />
       ) : (
       <div className="planet pointer-events-none absolute -bottom-[20vmax] -right-[8vmax] -z-[1] h-[36vmax] w-[36vmax] will-change-transform">
-        <div className="absolute inset-0 rounded-full" style={{ background: "radial-gradient(circle at 30% 25%, #ffd1f1 0%, #f272c8 28%, #5b2cff 62%, #12082e 100%)", boxShadow: "inset -4vmax -2vmax 6vmax rgba(0,0,0,.55), 0 0 12vmax rgba(242,114,200,.25)" }} />
-        <div className="planet-ring absolute left-1/2 top-1/2 h-[34%] w-[165%] -translate-x-1/2 -translate-y-1/2 rotate-[-18deg] rounded-[50%] border border-white/25" style={{ boxShadow: "0 0 30px rgba(200,255,61,.15)" }} />
+        <div className="absolute inset-0 rounded-full" style={day ? { background: "radial-gradient(circle at 30% 25%, #fff6c9 0%, #ffd166 30%, #ff9a76 66%, #f272c8 100%)", boxShadow: "inset -3vmax -2vmax 5vmax rgba(255,120,90,.35), 0 0 14vmax rgba(255,190,90,.55)" } : { background: "radial-gradient(circle at 30% 25%, #ffd1f1 0%, #f272c8 28%, #5b2cff 62%, #12082e 100%)", boxShadow: "inset -4vmax -2vmax 6vmax rgba(0,0,0,.55), 0 0 12vmax rgba(242,114,200,.25)" }} />
+        <div className={`planet-ring absolute left-1/2 top-1/2 h-[34%] w-[165%] -translate-x-1/2 -translate-y-1/2 rotate-[-18deg] rounded-[50%] border ${day ? "border-fg/20" : "border-white/25"}`} style={day ? undefined : { boxShadow: "0 0 30px rgba(200,255,61,.15)" }} />
       </div>
       )}
 
@@ -158,9 +161,9 @@ const Contact = () => {
         </div>
 
         <div className="ct-form mt-16 grid gap-14 lg:mt-28 lg:grid-cols-[1fr_1.2fr]">
-          <div className="ct-fade space-y-8 self-start rounded-3xl border border-white/15 bg-black/40 p-6 backdrop-blur-md sm:p-8">
+          <div className={`ct-fade space-y-8 self-start rounded-3xl border ${glass} p-6 backdrop-blur-md sm:p-8`}>
             <div>
-              <p className="font-mono text-xs uppercase tracking-widest text-white/75">Email</p>
+              <p className={`font-mono text-xs uppercase tracking-widest ${sub}`}>Email</p>
               <div className="mt-2 flex flex-wrap items-center gap-4">
                 <a href={`mailto:${profile.email}`} className="break-all font-display text-2xl font-semibold underline-offset-8 hover:underline sm:text-3xl">{profile.email}</a>
                 <button onClick={copy} className="rounded-full border hairline px-4 py-2 font-mono text-[11px] uppercase tracking-widest hover:bg-fg/10">
@@ -169,7 +172,7 @@ const Contact = () => {
               </div>
             </div>
             <div>
-              <p className="font-mono text-xs uppercase tracking-widest text-white/75">Elsewhere</p>
+              <p className={`font-mono text-xs uppercase tracking-widest ${sub}`}>Elsewhere</p>
               <div className="mt-3 flex flex-wrap gap-3">
                 {profile.booking && (
                   <Magnetic>
@@ -198,14 +201,14 @@ const Contact = () => {
                   {status.type === "loading" ? "Sending..." : "Send message →"}
                 </button>
               </Magnetic>
-              <p role="status" className={`text-sm ${status.type === "err" ? "text-red-400" : "text-white/85"}`}>{status.text}</p>
+              <p role="status" className={`text-sm ${status.type === "err" ? "text-red-500" : day ? "text-fg/80" : "text-white/85"}`}>{status.text}</p>
             </div>
           </form>
         </div>
 
         {cyber && <Terminal />}
 
-        <footer className="relative z-10 mt-24 flex flex-col justify-between gap-3 border-t border-white/20 pt-6 font-mono text-[11px] uppercase tracking-widest text-white/85 [text-shadow:0_1px_10px_rgba(0,0,0,0.8)] sm:flex-row">
+        <footer className={`relative z-10 mt-24 flex flex-col justify-between gap-3 border-t pt-6 font-mono text-[11px] uppercase tracking-widest sm:flex-row ${day ? "border-fg/20 text-fg/75" : "border-white/20 text-white/85 [text-shadow:0_1px_10px_rgba(0,0,0,0.8)]"}`}>
           <span>© {new Date().getFullYear()} Aditya Sharma</span>
           <span>Built with React · GSAP · Tailwind<span aria-hidden="true" className="ml-3 select-none opacity-[0.14]">↑ ↑ ↓ ↓</span></span>
         </footer>

@@ -4,6 +4,7 @@ import { projects, formatDate } from "../data";
 import { TLink } from "../components/PageTransition";
 import { useSeo } from "../hooks/useSeo";
 import ProjectCover from "../components/ProjectCover";
+import BuilderMount from "../components/BuilderMount";
 
 // "React 18" and "React" count as the same tech, so the filter chips stay short
 const norm = (s) => s.replace(/\s+v?\d+(\.\d+)*$/i, "");
@@ -126,6 +127,7 @@ const ProjectsArchive = () => {
           </div>
         ))}
       </div>
+      <BuilderMount />
     </main>
   );
 };

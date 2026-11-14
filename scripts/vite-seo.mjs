@@ -133,7 +133,7 @@ export default function seo() {
           `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n  <channel>\n    <title>Aditya Sharma — Notes</title>\n    <link>${site}/notes</link>\n    <atom:link href="${site}/feed.xml" rel="self" type="application/rss+xml" />\n    <description>Short write-ups from building this site and other projects.</description>\n    <language>en</language>\n${items}\n  </channel>\n</rss>\n`
         );
       }
-      fs.writeFileSync(path.join(outDir, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /api/\n\n# the neon side has no handle. only keys.\n\nSitemap: ${site}/sitemap.xml\n`);
+      fs.writeFileSync(path.join(outDir, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /api/\n\n# the neon side has no handle. only keys.\n# the foreman is not a crawler.\n\nSitemap: ${site}/sitemap.xml\n`);
       console.log(`[seo] wrote ${pages.length} pages, sitemap.xml, robots.txt${notes.length ? ", feed.xml" : ""} for ${site}`);
     },
   };

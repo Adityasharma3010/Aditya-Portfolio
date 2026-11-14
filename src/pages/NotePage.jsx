@@ -5,6 +5,7 @@ import { notes, noteDate, readTime } from "../data/notes";
 import { TLink } from "../components/PageTransition";
 import { useSeo } from "../hooks/useSeo";
 import NotFound from "./NotFound";
+import BuilderMount from "../components/BuilderMount";
 
 // `inline code` inside a text string
 const Inline = ({ text }) =>
@@ -87,6 +88,7 @@ const NotePage = () => {
           )}
         </div>
       </article>
+      <BuilderMount />
     </main>
   );
 };

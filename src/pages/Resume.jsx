@@ -4,6 +4,7 @@ import { profile, about, experiences, stack, projects } from "../data";
 import { useSeo } from "../hooks/useSeo";
 import { TLink } from "../components/PageTransition";
 import Magnetic from "../components/Magnetic";
+import BuilderMount from "../components/BuilderMount";
 
 const Section = ({ title, children }) => (
   <section className="rs-section grid gap-4 border-t hairline py-8 sm:grid-cols-[10rem_1fr] sm:gap-10 print:block print:py-5">
@@ -91,6 +92,7 @@ const Resume = () => {
           <p className="font-mono text-xs uppercase leading-loose tracking-wider">{stack.map((s) => s.name).join("  ·  ")}</p>
         </Section>
       </div>
+      <BuilderMount />
     </main>
   );
 };

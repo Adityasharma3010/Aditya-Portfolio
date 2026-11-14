@@ -9,6 +9,7 @@ import { useLenis } from "./SmoothScroll";
 import ThemeToggle from "./ThemeToggle";
 import ThemeMenu from "./ThemeMenu";
 import MotionToggle from "./MotionToggle";
+import BuilderToggle from "./BuilderToggle";
 
 const Navbar = ({ ready }) => {
   const root = useRef(null);
@@ -97,6 +98,8 @@ const Navbar = ({ ready }) => {
             {cyber && <ThemeMenu />}
             <ThemeToggle />
             <MotionToggle />
+            {/* needs a wider screen, so it is not offered on phones */}
+            <span className="hidden md:contents"><BuilderToggle /></span>
             {/* hidden on the very smallest phones so the five buttons fit (the palette has a Sound blips entry) */}
             {cyber && <span className="hidden min-[360px]:contents"><SoundToggle /></span>}
             <button

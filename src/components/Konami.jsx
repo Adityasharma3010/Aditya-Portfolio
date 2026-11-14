@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "../context/Theme";
+import { useBuilder } from "../context/Builder";
 import { overdrive } from "../lib/overdrive";
 import { useJump } from "../hooks/useJump";
 import { unlock } from "../lib/achievements";
@@ -9,11 +10,14 @@ import { SECRETS } from "../lib/secrets";
 // which is loaded when the browser is idle so it never competes with the first paint.
 // Cyberpunk / override:  ↑ ↑ ↓ ↓ ← → ← →  or type "cyberpunk" / "override".
 // In the default skin it unlocks Cyberpunk. In Cyberpunk it triggers overdrive.
+// Builder mode:  ↓ ← ↑ → ↓ ← ↑ →  or type "builder" (switches it on, and off again).
 const ARROW_KEYS = { ArrowUp: "U", ArrowDown: "D", ArrowLeft: "L", ArrowRight: "R" };
 const CYBER_ARROWS = SECRETS.find((s) => s.id === "cyberpunk").arrows;
+const BUILDER_ARROWS = SECRETS.find((s) => s.id === "builder").arrows;
 
 const Konami = () => {
   const { cyber, switchSkin } = useTheme();
+  const { toggleBuilder } = useBuilder();
   const jump = useJump();
   const [mod, setMod] = useState(null);
 
@@ -44,11 +48,13 @@ const Konami = () => {
         unlock("cyberpunk");
       }
     };
+    // Builder mode is a cheat too: it switches on (the navbar switch then appears) and the same code switches it off again
+    const builderCheat = () => { toggleBuilder(); unlock("builder"); };
     // a cheat that is busy (another effect is running) returns false and does not count as found
     const run = (name) => () => { if (CHEATS[name]() !== false) unlock(name); };
-    const words = { cyberpunk: cyberCheat, override: cyberCheat };
+    const words = { cyberpunk: cyberCheat, override: cyberCheat, builder: builderCheat };
     Object.keys(CHEATS).forEach((name) => { words[name] = run(name); });
-    const combos = { [CYBER_ARROWS]: cyberCheat };
+    const combos = { [CYBER_ARROWS]: cyberCheat, [BUILDER_ARROWS]: builderCheat };
     Object.entries(CHEAT_ARROWS).forEach(([name, combo]) => { combos[combo] = run(name); });
 
     const wordList = Object.keys(words);
@@ -131,7 +137,7 @@ const Konami = () => {
       window.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("run-cheat", onRun);
     };
-  }, [mod, cyber, switchSkin]);
+  }, [mod, cyber, switchSkin, toggleBuilder]);
 
   return null;
 };

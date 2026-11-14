@@ -3,6 +3,7 @@ import { gsap, useGSAP, prefersReducedMotion } from "../lib/gsap";
 import { notes, noteDate, readTime } from "../data/notes";
 import { TLink } from "../components/PageTransition";
 import { useSeo } from "../hooks/useSeo";
+import BuilderMount from "../components/BuilderMount";
 
 const allTags = [...new Set(notes.flatMap((n) => n.tags))].sort();
 
@@ -69,6 +70,7 @@ const Notes = () => {
           ))}
         </ul>
       </div>
+      <BuilderMount />
     </main>
   );
 };

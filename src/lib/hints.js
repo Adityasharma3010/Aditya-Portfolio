@@ -15,5 +15,6 @@ export const consoleHint = () => {
     "color:inherit"
   );
   console.log("%c...and since you read the console: try hireMe()", "opacity:.7");
+  console.log("%csomeone left the editor open. say his job title.", "opacity:.5");
   console.log("%cwhat breaks gets written down. plural. one slash from home.", "opacity:.45");
 };

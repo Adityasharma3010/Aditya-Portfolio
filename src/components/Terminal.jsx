@@ -162,7 +162,7 @@ const Terminal = () => {
   };
 
   return (
-    <div className="ct-fade mt-16 overflow-hidden rounded-2xl border border-accent2/40 bg-black/50 font-mono text-xs backdrop-blur-md sm:text-sm" onClick={() => inputRef.current?.focus()}>
+    <div className={`ct-fade mt-16 overflow-hidden rounded-2xl border border-accent2/40 ${mode === "light" ? "bg-surface/80" : "bg-black/50"} font-mono text-xs backdrop-blur-md sm:text-sm`} onClick={() => inputRef.current?.focus()}>
       <div className="flex items-center justify-between border-b border-accent2/30 px-4 py-2 text-[10px] uppercase tracking-[0.25em] text-accent2">
         <span>visitor@aditya:~ // shell</span>
         <span className="flex gap-1.5"><i className="h-2 w-2 bg-accent3" /><i className="h-2 w-2 bg-accent" /><i className="h-2 w-2 bg-accent2" /></span>

@@ -9,6 +9,7 @@ import Contact from "../components/Contact";
 import GithubActivity from "../components/GithubActivity";
 import Testimonials from "../components/Testimonials";
 import { useSeo } from "../hooks/useSeo";
+import BuilderMount from "../components/BuilderMount";
 
 const Home = ({ ready }) => {
   useSeo("Aditya Sharma — Full Stack Developer", "Full stack developer building fast, animated web experiences with React, GSAP, Node and WordPress. Projects, experience and contact.", "/");
@@ -31,6 +32,7 @@ const Home = ({ ready }) => {
       <Testimonials />
       <Stack />
       <Contact />
+      <BuilderMount ready={ready} />
     </main>
   );
 };

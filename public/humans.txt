@@ -9,3 +9,4 @@ Fun fact: this site has another side. It only opens from the keyboard.
 The second half is: left, right, left, right.
 The first half is further down the page.
 Also: I keep a notebook of what broke and how I fixed it. Its contents, plural, one slash from home.
+Also: the editor that built this site is still open somewhere. It only listens for a job title.

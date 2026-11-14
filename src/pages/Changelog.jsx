@@ -4,6 +4,7 @@ import { changelog } from "../data/changelog";
 import { noteDate } from "../data/notes";
 import { useSeo } from "../hooks/useSeo";
 import { TLink } from "../components/PageTransition";
+import BuilderMount from "../components/BuilderMount";
 
 const Changelog = () => {
   const root = useRef(null);
@@ -47,6 +48,7 @@ const Changelog = () => {
           ))}
         </ol>
       </div>
+      <BuilderMount />
     </main>
   );
 };

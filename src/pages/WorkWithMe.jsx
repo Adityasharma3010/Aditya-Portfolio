@@ -7,6 +7,7 @@ import { useJump } from "../hooks/useJump";
 import { TLink } from "../components/PageTransition";
 import Magnetic from "../components/Magnetic";
 import FlowSteps from "../components/FlowSteps";
+import BuilderMount from "../components/BuilderMount";
 
 const Label = ({ children }) => <h2 className="font-mono text-xs uppercase tracking-widest text-muted">{children}</h2>;
 
@@ -147,6 +148,7 @@ const WorkWithMe = () => {
           <p role="status" className="sr-only">{copied ? "Email address copied" : ""}</p>
         </section>
       </div>
+      <BuilderMount />
     </main>
   );
 };

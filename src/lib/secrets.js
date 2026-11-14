@@ -7,6 +7,7 @@ export const ARROW_GLYPH = { U: "↑", D: "↓", L: "←", R: "→" };
 export const SECRETS = [
   { id: "cyberpunk", name: "The neon side", word: "cyberpunk", also: "override", arrows: "UUDDLRLR", hint: "Four keys, eight presses, and a door with no handle." },
   { id: "overdrive", name: "Overdrive", word: "cyberpunk", also: "override", arrows: "UUDDLRLR", hint: "Already in the neon? Do it again.", note: "the same code, once you are in Cyberpunk" },
+  { id: "builder", name: "Foreman", word: "builder", arrows: "DLURDLUR", hint: "Somebody left the editor open." },
   { id: "iddqd", name: "God mode", word: "iddqd", arrows: "UDUDLLRR", hint: "Invincibility, the old-school way." },
   { id: "idkfa", name: "All keys", word: "idkfa", arrows: "LRLRDDUU", hint: "Every key, and your whole stack." },
   { id: "hadouken", name: "Hadouken", word: "hadouken", arrows: "DRDRLULU", hint: "A fighter’s signature move." },

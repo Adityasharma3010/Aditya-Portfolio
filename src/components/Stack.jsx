@@ -40,7 +40,7 @@ const Stack = () => {
   const edge = { maskImage: "linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)" };
 
   return (
-    <section ref={root} className="overflow-hidden py-20 sm:py-32">
+    <section id="stack" ref={root} className="overflow-hidden py-20 sm:py-32">
       <Marquee
         items={["React", "GSAP", "Node.js", "WordPress", "Tailwind", "MongoDB", "Supabase"]}
         speed={50}

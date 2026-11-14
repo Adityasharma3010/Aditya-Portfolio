@@ -3,6 +3,7 @@ import { gsap, SplitText, useGSAP, prefersReducedMotion } from "../lib/gsap";
 import { uses } from "../data/uses";
 import { useSeo } from "../hooks/useSeo";
 import { TLink } from "../components/PageTransition";
+import BuilderMount from "../components/BuilderMount";
 
 const Uses = () => {
   const root = useRef(null);
@@ -48,6 +49,7 @@ const Uses = () => {
         </div>
         <p className="mt-20 font-mono text-[11px] uppercase tracking-widest text-muted/40">the fixes that did not fit in a list are kept elsewhere</p>
       </div>
+      <BuilderMount />
     </main>
   );
 };

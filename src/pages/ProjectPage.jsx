@@ -11,6 +11,7 @@ import FlowSteps from "../components/FlowSteps";
 import { diagrams } from "../data/diagrams";
 import { useSeo } from "../hooks/useSeo";
 import { takeFlip } from "../lib/flip";
+import BuilderMount from "../components/BuilderMount";
 
 const LANG_COLORS = {
   JavaScript: "#f7df1e", TypeScript: "#3178c6", HTML: "#e34c26", CSS: "#a855f7",
@@ -259,6 +260,7 @@ const ProjectPage = () => {
           </TLink>
         </div>
       </div>
+      <BuilderMount />
     </main>
   );
 };

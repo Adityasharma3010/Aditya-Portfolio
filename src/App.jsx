@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { ScrollTrigger } from "./lib/gsap";
 import { ThemeProvider, useTheme } from "./context/Theme";
 import { MotionProvider, useMotion } from "./context/Motion";
+import { BuilderProvider } from "./context/Builder";
 import SmoothScroll from "./components/SmoothScroll";
 import { TransitionProvider } from "./components/PageTransition";
 import Loader from "./components/Loader";
@@ -107,6 +108,7 @@ const Shell = () => {
 
 const App = () => (
   <MotionProvider>
+    <BuilderProvider>
     <ThemeProvider>
       <BrowserRouter>
         <SmoothScroll>
@@ -116,6 +118,7 @@ const App = () => (
         </SmoothScroll>
       </BrowserRouter>
     </ThemeProvider>
+    </BuilderProvider>
   </MotionProvider>
 );
 
